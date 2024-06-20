@@ -7,9 +7,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.alex9043.sushiapp.DTO.products.ProductRequestDTO;
-import ru.alex9043.sushiapp.DTO.products.ProductResponseDTO;
-import ru.alex9043.sushiapp.DTO.products.ProductsResponseDTO;
+import ru.alex9043.sushiapp.DTO.product.ProductRequestDTO;
+import ru.alex9043.sushiapp.DTO.product.ProductResponseDTO;
+import ru.alex9043.sushiapp.DTO.product.ProductsResponseDTO;
 import ru.alex9043.sushiapp.service.ProductService;
 
 @RestController

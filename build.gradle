@@ -40,6 +40,10 @@ dependencies {
     testImplementation 'ch.qos.logback:logback-classic:1.4.14'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
+bootJar {
+    setMainClass('ru.alex9043.sushiapp.SushiAppApplication')
+}
+
+tasks.named('jar') {
+    enabled = false
 }

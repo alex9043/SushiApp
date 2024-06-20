@@ -1,4 +1,4 @@
-package ru.alex9043.sushiapp.DTO.products;
+package ru.alex9043.sushiapp.DTO.product;
 
 import lombok.Builder;
 import lombok.Data;

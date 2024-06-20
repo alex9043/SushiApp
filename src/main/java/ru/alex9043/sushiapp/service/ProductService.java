@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import ru.alex9043.sushiapp.DTO.products.ProductRequestDTO;
-import ru.alex9043.sushiapp.DTO.products.ProductResponseDTO;
-import ru.alex9043.sushiapp.DTO.products.ProductsResponseDTO;
+import ru.alex9043.sushiapp.DTO.product.ProductRequestDTO;
+import ru.alex9043.sushiapp.DTO.product.ProductResponseDTO;
+import ru.alex9043.sushiapp.DTO.product.ProductsResponseDTO;
 import ru.alex9043.sushiapp.model.product.Product;
 import ru.alex9043.sushiapp.repository.product.ProductRepository;
 
@@ -35,7 +35,6 @@ public class ProductService {
         log.info("Creating a new product with name: {}", productRequestDTO.getName());
         Product product = productRepository.save(modelMapper.map(productRequestDTO, Product.class));
         log.debug("Created product with ID: {}", product.getId());
-
         return modelMapper.map(product, ProductResponseDTO.class);
     }
 }
