@@ -10,6 +10,7 @@ import ru.alex9043.sushiapp.DTO.error.ErrorMessageDTO;
 import ru.alex9043.sushiapp.DTO.error.ErrorMessagesDTO;
 
 import java.util.Date;
+import java.util.List;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -26,6 +27,23 @@ public class GlobalExceptionHandler {
                                         .timestamp(new Date())
                                         .build()
                         ).toList()
+                )
+                .build();
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ErrorMessagesDTO handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ErrorMessagesDTO.builder()
+                .errorMessages(
+                        List.of(
+                                ErrorMessageDTO.builder()
+                                        .errorCode(HttpStatus.NOT_FOUND.toString())
+                                        .message(ex.getMessage())
+                                        .timestamp(new Date())
+                                        .build()
+                        )
                 )
                 .build();
     }
