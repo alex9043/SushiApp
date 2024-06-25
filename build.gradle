@@ -47,3 +47,10 @@ bootJar {
 tasks.named('jar') {
     enabled = false
 }
+
+tasks.named('test') {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
+}
