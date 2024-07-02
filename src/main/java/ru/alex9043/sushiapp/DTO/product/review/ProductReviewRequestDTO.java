@@ -1,4 +1,4 @@
-package ru.alex9043.sushiapp.DTO.product;
+package ru.alex9043.sushiapp.DTO.product.review;
 
 import jakarta.validation.constraints.Size;
 import lombok.Data;

@@ -16,15 +16,20 @@ import java.util.Objects;
 @Entity
 public class ProductReview {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
+    @Column(name = "reviewer_name")
     private String reviewerName;
-    private String reviewText;
+    @Column(name = "rating")
     private Integer rating;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
+
+    @Column(columnDefinition = "TEXT")
+    private String reviewText;
 
     @Override
     public final boolean equals(Object o) {

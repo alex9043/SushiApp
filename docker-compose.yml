@@ -13,11 +13,10 @@ services:
       - POSTGRES_NAME=sushi_app_db
       - POSTGRES_USERNAME=postgres
       - POSTGRES_PASSWORD=postgres
-
   postgres_db:
     image: postgres:16.3-alpine
     ports:
-      - "5432:5432"
+      - "54321:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres

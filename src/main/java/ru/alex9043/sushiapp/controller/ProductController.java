@@ -8,7 +8,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.alex9043.sushiapp.DTO.product.*;
+import ru.alex9043.sushiapp.DTO.product.ingredient.IngredientRequestDTO;
+import ru.alex9043.sushiapp.DTO.product.ingredient.IngredientResponseDTO;
+import ru.alex9043.sushiapp.DTO.product.ingredient.IngredientsIdRequestDTO;
+import ru.alex9043.sushiapp.DTO.product.product.ProductRequestDTO;
+import ru.alex9043.sushiapp.DTO.product.product.ProductResponseDTO;
+import ru.alex9043.sushiapp.DTO.product.product.ProductsResponseDTO;
+import ru.alex9043.sushiapp.DTO.product.review.ProductReviewRequestDTO;
+import ru.alex9043.sushiapp.DTO.product.review.ProductReviewResponseDTO;
 import ru.alex9043.sushiapp.service.ProductService;
 
 import java.util.List;
@@ -41,7 +48,7 @@ public class ProductController {
     @Operation(summary = "Crate a new review for a product")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Review created successfuly"),
+                    @ApiResponse(responseCode = "200", description = "Review created successfully"),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
                     @ApiResponse(responseCode = "404", description = "Product not found"),
             })
@@ -57,5 +64,31 @@ public class ProductController {
     @GetMapping("/{productId}/reviews")
     public List<ProductReviewResponseDTO> getReviews(@PathVariable Long productId) {
         return productService.getReviews(productId);
+    }
+
+    @Operation(summary = "Crate a new ingredient")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Ingredient created successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input")
+            })
+    @PostMapping("/ingredients")
+    public IngredientResponseDTO createIngredient(
+            @Valid @RequestBody IngredientRequestDTO ingredientRequestDTO
+    ) {
+        return productService.createIngredient(ingredientRequestDTO);
+    }
+
+
+    @Operation(summary = "Add ingredients to a product")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Ingredient added successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input"),
+                    @ApiResponse(responseCode = "404", description = "Product not found"),
+            })
+    @PostMapping("/{productId}/ingredients")
+    public ProductResponseDTO addIngredientsToProduct(@PathVariable Long productId, @RequestBody IngredientsIdRequestDTO ingredients) {
+        return productService.addIngredientsToProduct(productId, ingredients);
     }
 }

@@ -1,4 +1,4 @@
-package ru.alex9043.sushiapp.DTO.product;
+package ru.alex9043.sushiapp.DTO.product.review;
 
 import lombok.Data;
 
@@ -6,6 +6,6 @@ import lombok.Data;
 public class ProductReviewResponseDTO {
     private Long id;
     private String reviewerName;
-    private String reviewText;
     private Integer rating;
+    private String reviewText;
 }
