@@ -7,38 +7,43 @@ values (690, 'Kabayaki ролл');
 insert into product (price, name)
 values (440, 'LOVE Ролл');
 
-insert into product_review (rating, product_id, review_text, reviewer_name)
-VALUES (5, 1, 'Для тех, кто на ПП) очень удачное сочетание ингредиентов, нам оч понравилось! Будем брать еще!',
+insert into product_review (rating, created_date, product_id, review_text, reviewer_name)
+VALUES (5, '2019-10-06 00:00:00.000000 +00:00', 1,
+        'Для тех, кто на ПП) очень удачное сочетание ингредиентов, нам оч понравилось! Будем брать еще!',
         'Ирина');
-insert into product_review (rating, product_id, review_text, reviewer_name)
-VALUES (5, 1, 'ОООООЧЕНЬ вкусный! будем брать', 'Вера');
-insert into product_review (rating, product_id, review_text, reviewer_name)
-VALUES (5, 1, 'Очень вкусный и нежный. Будет одним из моих фаворитов)', 'Ирина');
-insert into product_review (rating, product_id, review_text, reviewer_name)
-VALUES (5, 1, 'Вкусный и сытный ролл для тех, кому не нужны лишние калории. Обязательно закажу ещё!', 'Юлия');
-insert into product_review (rating, product_id, review_text, reviewer_name)
-VALUES (4, 1,
+insert into product_review (rating, created_date, product_id, review_text, reviewer_name)
+VALUES (5, '2019-05-08 00:00:00.000000 +00:00', 1, 'ОООООЧЕНЬ вкусный! будем брать', 'Вера');
+insert into product_review (rating, created_date, product_id, review_text, reviewer_name)
+VALUES (5, '2018-06-28 00:00:00.000000 +00:00', 1, 'Очень вкусный и нежный. Будет одним из моих фаворитов)', 'Ирина');
+insert into product_review (rating, created_date, product_id, review_text, reviewer_name)
+VALUES (5, '2018-03-17 00:00:00.000000 +00:00', 1,
+        'Вкусный и сытный ролл для тех, кому не нужны лишние калории. Обязательно закажу ещё!', 'Юлия');
+insert into product_review (rating, created_date, product_id, review_text, reviewer_name)
+VALUES (4, '2017-12-23 00:00:00.000000 +00:00', 1,
         'Заказывали недавно, свеженький. Авокадо спелое, была бы "картошка", было бы не так вкусно. Чего-то не хватает. Может быть, салата.',
         'Наталья');
-insert into product_review (rating, product_id, review_text, reviewer_name)
-VALUES (5, 1, 'Очень вкусный ролл, нам понравился,необычный, насыщенный вкус.', 'Екатерина');
+insert into product_review (rating, created_date, product_id, review_text, reviewer_name)
+VALUES (5, '2017-12-09 00:00:00.000000 +00:00', 1, 'Очень вкусный ролл, нам понравился,необычный, насыщенный вкус.',
+        'Екатерина');
 
-insert into product_review (rating, product_id, review_text, reviewer_name)
-VALUES (5, 3, 'Свежий ролл за счёт огурца, интересный вкус', 'Наталья');
-insert into product_review (rating, product_id, review_text, reviewer_name)
-VALUES (5, 3,
+insert into product_review (rating, created_date, product_id, review_text, reviewer_name)
+VALUES (5, '2018-03-23 00:00:00.000000 +00:00', 2, 'Свежий ролл за счёт огурца, интересный вкус', 'Наталья');
+insert into product_review (rating, created_date, product_id, review_text, reviewer_name)
+VALUES (5, '2018-01-21 00:00:00.000000 +00:00', 2,
         'Ролл очень вкусный. Хотя нет, очень много огурца, который перебивает все. Отзывы не удаляйте пожалуйста!',
         'Постоянный покупатель');
 
-insert into product_review (rating, product_id, review_text, reviewer_name)
-VALUES (5, 3, 'Оригинальное сочетание, большие порции, сытные, вкусные. Будем брать ещё.', 'Анастасия');
-insert into product_review (rating, product_id, review_text, reviewer_name)
-VALUES (5, 3, 'Очень вкусно!!! Обожаю роллы с угрем и авакадо.А с креветкой вообще класс)', 'Кира');
+insert into product_review (rating, created_date, product_id, review_text, reviewer_name)
+VALUES (5, '2020-09-27 00:00:00.000000 +00:00', 3,
+        'Оригинальное сочетание, большие порции, сытные, вкусные. Будем брать ещё.', 'Анастасия');
+insert into product_review (rating, created_date, product_id, review_text, reviewer_name)
+VALUES (5, '2020-08-23 00:00:00.000000 +00:00', 3,
+        'Очень вкусно!!! Обожаю роллы с угрем и авакадо.А с креветкой вообще класс)', 'Кира');
 
-insert into product_review (rating, product_id, review_text, reviewer_name)
-VALUES (5, 4, 'Космос, очень понравились!:)', 'Наталия');
-insert into product_review (rating, product_id, review_text, reviewer_name)
-VALUES (5, 4, 'Самые вкусные роллы из всех! Всем советую!', 'Наталия');
+insert into product_review (rating, created_date, product_id, review_text, reviewer_name)
+VALUES (5, '2019-03-03 00:00:00.000000 +00:00', 4, 'Космос, очень понравились!:)', 'Наталия');
+insert into product_review (rating, created_date, product_id, review_text, reviewer_name)
+VALUES (5, '2019-12-18 00:00:00.000000 +00:00', 4, 'Самые вкусные роллы из всех! Всем советую!', 'Кира');
 
 insert into ingredient (name)
 values ('Рис');

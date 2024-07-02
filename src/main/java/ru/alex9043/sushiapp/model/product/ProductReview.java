@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.Instant;
 import java.util.Objects;
 
 @Getter
@@ -27,6 +29,9 @@ public class ProductReview {
     @ManyToOne(optional = false)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
+
+    @CreatedDate
+    private Instant createdDate;
 
     @Column(columnDefinition = "TEXT")
     private String reviewText;
