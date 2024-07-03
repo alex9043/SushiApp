@@ -1,7 +1,9 @@
 package ru.alex9043.sushiapp.product;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import ru.alex9043.sushiapp.DTO.product.ingredient.IngredientResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.product.ProductResponseDTO;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -65,5 +68,66 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.reviewerName").value("test"))
                 .andExpect(jsonPath("$.reviewText").value("test"))
                 .andExpect(jsonPath("$.rating").value(5));
+    }
+
+    @Test
+    public void testCreateIngredientAndPutInProduct() throws Exception {
+        ObjectNode productNode = objectMapper.createObjectNode();
+        productNode.put("name", "test");
+        productNode.put("price", 100);
+
+        ObjectNode ingredientNode1 = objectMapper.createObjectNode();
+        ingredientNode1.put("name", "test1");
+        MvcResult ingredientResponse1 = mockMvc.perform(post("/products/ingredients")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(ingredientNode1.toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ObjectNode ingredientNode2 = objectMapper.createObjectNode();
+        ingredientNode2.put("name", "test2");
+        MvcResult ingredientResponse2 = mockMvc.perform(post("/products/ingredients")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(ingredientNode2.toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+        ObjectNode ingredientsRequest = objectMapper.createObjectNode();
+        ObjectNode ingredientNode3 = objectMapper.createObjectNode();
+        ingredientNode3.put("name", "test3");
+        MvcResult ingredientResponse3 = mockMvc.perform(post("/products/ingredients")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(ingredientNode3.toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Long ingredientId1 = objectMapper.readValue(
+                ingredientResponse1.getResponse().getContentAsString(), IngredientResponseDTO.class).getId();
+        Long ingredientId2 = objectMapper.readValue(
+                ingredientResponse2.getResponse().getContentAsString(), IngredientResponseDTO.class).getId();
+        Long ingredientId3 = objectMapper.readValue(
+                ingredientResponse3.getResponse().getContentAsString(), IngredientResponseDTO.class).getId();
+        ArrayNode ingredients = objectMapper.createArrayNode();
+        ingredients.add(ingredientId1);
+        ingredients.add(ingredientId2);
+        ingredients.add(ingredientId3);
+        ingredientsRequest.set("ingredients", ingredients);
+
+        MvcResult productResponse = mockMvc.perform(post("/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(productNode.toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Long productId = objectMapper.readValue(
+                productResponse.getResponse().getContentAsString(), ProductResponseDTO.class).getId();
+
+        mockMvc.perform(post("/products/" + productId + "/ingredients")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(ingredientsRequest.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("test"))
+                .andExpect(jsonPath("$.price").value(100))
+                .andExpect(jsonPath("$.ingredients[*].name",
+                        Matchers.containsInAnyOrder("test1", "test2", "test3")));
     }
 }

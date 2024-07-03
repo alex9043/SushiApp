@@ -20,7 +20,8 @@ import ru.alex9043.sushiapp.repository.product.IngredientRepository;
 import ru.alex9043.sushiapp.repository.product.ProductRepository;
 import ru.alex9043.sushiapp.repository.product.ProductReviewRepository;
 
-import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -84,7 +85,7 @@ public class ProductService {
                 () -> new IllegalArgumentException("Product not found"));
         ProductReview review = modelMapper.map(reviewRequestDTO, ProductReview.class);
         review.setProduct(product);
-        review.setCreatedDate(Instant.now());
+        review.setCreatedDate(ZonedDateTime.now(ZoneId.of("Europe/Moscow")).toInstant());
 
         review = productReviewRepository.save(review);
         log.debug("Created review with ID: {}", review.getId());
