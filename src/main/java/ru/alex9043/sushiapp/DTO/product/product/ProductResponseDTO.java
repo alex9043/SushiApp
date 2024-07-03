@@ -1,6 +1,7 @@
 package ru.alex9043.sushiapp.DTO.product.product;
 
 import lombok.Data;
+import ru.alex9043.sushiapp.DTO.product.category.CategoryResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.ingredient.IngredientResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.review.ProductReviewResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.tag.TagResponseDTO;
@@ -15,5 +16,6 @@ public class ProductResponseDTO {
     private Set<ProductReviewResponseDTO> reviews;
     private Set<IngredientResponseDTO> ingredients;
     private Set<TagResponseDTO> tags;
+    private Set<CategoryResponseDTO> categories;
     private Double rating;
 }

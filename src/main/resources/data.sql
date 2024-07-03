@@ -6,6 +6,8 @@ insert into product (price, name)
 values (690, 'Kabayaki ролл');
 insert into product (price, name)
 values (440, 'LOVE Ролл');
+insert into product (price, name)
+values (570, 'TUNA ролл');
 
 insert into product_review (rating, created_date, product_id, review_text, reviewer_name)
 VALUES (5, '2019-10-06 00:00:00.000000 +03:00', 1,
@@ -69,6 +71,18 @@ insert into ingredient (name)
 values ('Унаги соус');
 insert into ingredient (name)
 values ('Крабовые палочки');
+insert into ingredient (name)
+values ('Тунец');
+
+insert into tag (name)
+values ('Новинка');
+insert into tag (name)
+values ('Острое');
+
+insert into category (name)
+values ('Новинки');
+insert into category (name)
+values ('Фирменные роллы');
 
 insert into product_ingredients (product_id, ingredients_id)
 values (1, 1);
@@ -126,10 +140,34 @@ values (4, 6);
 insert into product_ingredients (product_id, ingredients_id)
 values (4, 5);
 
-insert into tag (name)
-values ('Новинка');
-insert into tag (name)
-values ('Острое');
+insert into product_ingredients (product_id, ingredients_id)
+values (5, 1);
+insert into product_ingredients (product_id, ingredients_id)
+values (5, 2);
+insert into product_ingredients (product_id, ingredients_id)
+values (5, 13);
+insert into product_ingredients (product_id, ingredients_id)
+values (5, 6);
+insert into product_ingredients (product_id, ingredients_id)
+values (5, 10);
 
 insert into product_tags (product_id, tags_id)
-values (3, 2)
+values (3, 2);
+insert into product_tags (product_id, tags_id)
+values (5, 1);
+insert into product_tags (product_id, tags_id)
+values (5, 2);
+
+insert into product_categories (categories_id, product_id)
+values (2, 1);
+insert into product_categories (categories_id, product_id)
+values (2, 2);
+insert into product_categories (categories_id, product_id)
+values (2, 3);
+insert into product_categories (categories_id, product_id)
+values (2, 4);
+
+insert into product_categories (categories_id, product_id)
+values (1, 5);
+insert into product_categories (categories_id, product_id)
+values (2, 5);

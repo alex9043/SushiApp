@@ -6,14 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import ru.alex9043.sushiapp.model.product.Ingredient;
-import ru.alex9043.sushiapp.model.product.Product;
-import ru.alex9043.sushiapp.model.product.ProductReview;
-import ru.alex9043.sushiapp.model.product.Tag;
-import ru.alex9043.sushiapp.repository.product.IngredientRepository;
-import ru.alex9043.sushiapp.repository.product.ProductRepository;
-import ru.alex9043.sushiapp.repository.product.ProductReviewRepository;
-import ru.alex9043.sushiapp.repository.product.TagRepository;
+import ru.alex9043.sushiapp.model.product.*;
+import ru.alex9043.sushiapp.repository.product.*;
 
 import java.util.Objects;
 
@@ -35,6 +29,8 @@ public class ProductRepositoryTest {
     private IngredientRepository ingredientRepository;
     @Autowired
     private TagRepository tagRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Test
     public void testSaveProduct() {
@@ -129,6 +125,36 @@ public class ProductRepositoryTest {
         ).findFirst().get().getName());
         assertEquals("Test2", savedProduct.getTags().stream().filter(
                 i -> Objects.equals(i.getId(), savedTag2.getId())
+        ).findFirst().get().getName());
+    }
+
+    @Test
+    public void testSaveCategorys() {
+        Category category1 = new Category();
+        category1.setName("Test1");
+        Category savedCategory1 = categoryRepository.save(category1);
+
+        Category category2 = new Category();
+        category2.setName("Test2");
+        Category savedCategory2 = categoryRepository.save(category2);
+
+        Product product = new Product();
+        product.setName("Test");
+        product.setPrice(300);
+        Product savedProduct = productRepository.save(product);
+
+        savedProduct.getCategories().add(savedCategory1);
+        savedProduct.getCategories().add(savedCategory2);
+        savedProduct = productRepository.save(savedProduct);
+
+        assertNotNull(category1.getId());
+        assertNotNull(category2.getId());
+        assertEquals("Test", savedProduct.getName());
+        assertEquals("Test1", savedProduct.getCategories().stream().filter(
+                i -> Objects.equals(i.getId(), savedCategory1.getId())
+        ).findFirst().get().getName());
+        assertEquals("Test2", savedProduct.getCategories().stream().filter(
+                i -> Objects.equals(i.getId(), savedCategory2.getId())
         ).findFirst().get().getName());
     }
 }

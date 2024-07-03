@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import ru.alex9043.sushiapp.DTO.product.category.CategoriesIdRequestDTO;
+import ru.alex9043.sushiapp.DTO.product.category.CategoryRequestDTO;
+import ru.alex9043.sushiapp.DTO.product.category.CategoryResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.ingredient.IngredientRequestDTO;
 import ru.alex9043.sushiapp.DTO.product.ingredient.IngredientResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.ingredient.IngredientsIdRequestDTO;
@@ -16,14 +19,8 @@ import ru.alex9043.sushiapp.DTO.product.review.ProductReviewResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.tag.TagRequestDTO;
 import ru.alex9043.sushiapp.DTO.product.tag.TagResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.tag.TagsIdRequestDTO;
-import ru.alex9043.sushiapp.model.product.Ingredient;
-import ru.alex9043.sushiapp.model.product.Product;
-import ru.alex9043.sushiapp.model.product.ProductReview;
-import ru.alex9043.sushiapp.model.product.Tag;
-import ru.alex9043.sushiapp.repository.product.IngredientRepository;
-import ru.alex9043.sushiapp.repository.product.ProductRepository;
-import ru.alex9043.sushiapp.repository.product.ProductReviewRepository;
-import ru.alex9043.sushiapp.repository.product.TagRepository;
+import ru.alex9043.sushiapp.model.product.*;
+import ru.alex9043.sushiapp.repository.product.*;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -35,6 +32,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class ProductService {
+    private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
     private final ProductRepository productRepository;
     private final ProductReviewRepository productReviewRepository;
@@ -146,6 +144,27 @@ public class ProductService {
         }
 
         product.getTags().addAll(tags);
+        productRepository.save(product);
+
+        return mapToProductResponseDTO(product);
+    }
+
+    public CategoryResponseDTO createCategory(CategoryRequestDTO categoryRequestDTO) {
+        log.info("Creating a new category");
+        Category category = modelMapper.map(categoryRequestDTO, Category.class);
+        return modelMapper.map(categoryRepository.save(category), CategoryResponseDTO.class);
+    }
+
+    public ProductResponseDTO addCategoriesToProduct(Long productId, CategoriesIdRequestDTO categoriesId) {
+        log.info("Adding categories to product ID: {}", productId);
+        Product product = productRepository.findById(productId).orElseThrow(
+                () -> new IllegalArgumentException("Product not found"));
+        List<Category> categories = categoryRepository.findAllById(categoriesId.getCategories());
+        if (categories.size() != categoriesId.getCategories().size()) {
+            throw new IllegalArgumentException("Some categories not found");
+        }
+
+        product.getCategories().addAll(categories);
         productRepository.save(product);
 
         return mapToProductResponseDTO(product);

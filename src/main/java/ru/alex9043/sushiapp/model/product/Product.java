@@ -45,6 +45,13 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "tags_id"))
     private Set<Tag> tags = new LinkedHashSet<>();
 
+    @ToString.Exclude
+    @ManyToMany
+    @JoinTable(name = "product_categories",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "categories_id"))
+    private Set<Category> categories = new LinkedHashSet<>();
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;

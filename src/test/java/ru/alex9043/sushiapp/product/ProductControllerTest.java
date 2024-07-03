@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import ru.alex9043.sushiapp.DTO.product.category.CategoryResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.ingredient.IngredientResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.product.ProductResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.tag.TagResponseDTO;
@@ -92,7 +93,7 @@ public class ProductControllerTest {
                         .content(ingredientNode2.toString()))
                 .andExpect(status().isOk())
                 .andReturn();
-        ObjectNode ingredientsRequest = objectMapper.createObjectNode();
+
         ObjectNode ingredientNode3 = objectMapper.createObjectNode();
         ingredientNode3.put("name", "test3");
         MvcResult ingredientResponse3 = mockMvc.perform(post("/products/ingredients")
@@ -111,6 +112,8 @@ public class ProductControllerTest {
         ingredients.add(ingredientId1);
         ingredients.add(ingredientId2);
         ingredients.add(ingredientId3);
+
+        ObjectNode ingredientsRequest = objectMapper.createObjectNode();
         ingredientsRequest.set("ingredients", ingredients);
 
         MvcResult productResponse = mockMvc.perform(post("/products")
@@ -153,7 +156,7 @@ public class ProductControllerTest {
                         .content(tagNode2.toString()))
                 .andExpect(status().isOk())
                 .andReturn();
-        ObjectNode tagsRequest = objectMapper.createObjectNode();
+
         ObjectNode tagNode3 = objectMapper.createObjectNode();
         tagNode3.put("name", "test3");
         MvcResult tagResponse3 = mockMvc.perform(post("/products/tags")
@@ -172,6 +175,8 @@ public class ProductControllerTest {
         tags.add(tagId1);
         tags.add(tagId2);
         tags.add(tagId3);
+
+        ObjectNode tagsRequest = objectMapper.createObjectNode();
         tagsRequest.set("tags", tags);
 
         MvcResult productResponse = mockMvc.perform(post("/products")
@@ -190,6 +195,69 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.name").value("test"))
                 .andExpect(jsonPath("$.price").value(100))
                 .andExpect(jsonPath("$.tags[*].name",
+                        Matchers.containsInAnyOrder("test1", "test2", "test3")));
+    }
+
+    @Test
+    public void testCreateCategoryAndPutInProduct() throws Exception {
+        ObjectNode productNode = objectMapper.createObjectNode();
+        productNode.put("name", "test");
+        productNode.put("price", 100);
+
+        ObjectNode categoryNode1 = objectMapper.createObjectNode();
+        categoryNode1.put("name", "test1");
+        MvcResult categoryResponse1 = mockMvc.perform(post("/products/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(categoryNode1.toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ObjectNode categoryNode2 = objectMapper.createObjectNode();
+        categoryNode2.put("name", "test2");
+        MvcResult categoryResponse2 = mockMvc.perform(post("/products/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(categoryNode2.toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ObjectNode categoryNode3 = objectMapper.createObjectNode();
+        categoryNode3.put("name", "test3");
+        MvcResult categoryResponse3 = mockMvc.perform(post("/products/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(categoryNode3.toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Long categoryId1 = objectMapper.readValue(
+                categoryResponse1.getResponse().getContentAsString(), CategoryResponseDTO.class).getId();
+        Long categoryId2 = objectMapper.readValue(
+                categoryResponse2.getResponse().getContentAsString(), CategoryResponseDTO.class).getId();
+        Long categoryId3 = objectMapper.readValue(
+                categoryResponse3.getResponse().getContentAsString(), CategoryResponseDTO.class).getId();
+        ArrayNode categories = objectMapper.createArrayNode();
+        categories.add(categoryId1);
+        categories.add(categoryId2);
+        categories.add(categoryId3);
+
+        ObjectNode categoriesRequest = objectMapper.createObjectNode();
+        categoriesRequest.set("categories", categories);
+
+        MvcResult productResponse = mockMvc.perform(post("/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(productNode.toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Long productId = objectMapper.readValue(
+                productResponse.getResponse().getContentAsString(), ProductResponseDTO.class).getId();
+
+        mockMvc.perform(post("/products/" + productId + "/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(categoriesRequest.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("test"))
+                .andExpect(jsonPath("$.price").value(100))
+                .andExpect(jsonPath("$.categories[*].name",
                         Matchers.containsInAnyOrder("test1", "test2", "test3")));
     }
 }

@@ -8,6 +8,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.alex9043.sushiapp.DTO.product.category.CategoriesIdRequestDTO;
+import ru.alex9043.sushiapp.DTO.product.category.CategoryRequestDTO;
+import ru.alex9043.sushiapp.DTO.product.category.CategoryResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.ingredient.IngredientRequestDTO;
 import ru.alex9043.sushiapp.DTO.product.ingredient.IngredientResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.ingredient.IngredientsIdRequestDTO;
@@ -119,5 +122,31 @@ public class ProductController {
     @PostMapping("/{productId}/tags")
     public ProductResponseDTO addTagsToProduct(@PathVariable Long productId, @RequestBody TagsIdRequestDTO tags) {
         return productService.addTagsToProduct(productId, tags);
+    }
+
+    @Operation(summary = "Crate a new category")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Category created successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input")
+            })
+    @PostMapping("/categories")
+    public CategoryResponseDTO createCategory(
+            @Valid @RequestBody CategoryRequestDTO categoryRequestDTO
+    ) {
+        return productService.createCategory(categoryRequestDTO);
+    }
+
+
+    @Operation(summary = "Add categories to a product")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Categories added successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input"),
+                    @ApiResponse(responseCode = "404", description = "Product not found"),
+            })
+    @PostMapping("/{productId}/categories")
+    public ProductResponseDTO addCategoriesToProduct(@PathVariable Long productId, @RequestBody CategoriesIdRequestDTO categories) {
+        return productService.addCategoriesToProduct(productId, categories);
     }
 }
