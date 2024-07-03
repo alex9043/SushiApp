@@ -9,9 +9,11 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.alex9043.sushiapp.model.product.Ingredient;
 import ru.alex9043.sushiapp.model.product.Product;
 import ru.alex9043.sushiapp.model.product.ProductReview;
+import ru.alex9043.sushiapp.model.product.Tag;
 import ru.alex9043.sushiapp.repository.product.IngredientRepository;
 import ru.alex9043.sushiapp.repository.product.ProductRepository;
 import ru.alex9043.sushiapp.repository.product.ProductReviewRepository;
+import ru.alex9043.sushiapp.repository.product.TagRepository;
 
 import java.util.Objects;
 
@@ -31,6 +33,8 @@ public class ProductRepositoryTest {
     private ProductReviewRepository reviewRepository;
     @Autowired
     private IngredientRepository ingredientRepository;
+    @Autowired
+    private TagRepository tagRepository;
 
     @Test
     public void testSaveProduct() {
@@ -95,6 +99,36 @@ public class ProductRepositoryTest {
         ).findFirst().get().getName());
         assertEquals("Test2", savedProduct.getIngredients().stream().filter(
                 i -> Objects.equals(i.getId(), savedIngredient2.getId())
+        ).findFirst().get().getName());
+    }
+
+    @Test
+    public void testSaveTags() {
+        Tag tag1 = new Tag();
+        tag1.setName("Test1");
+        Tag savedTag1 = tagRepository.save(tag1);
+
+        Tag tag2 = new Tag();
+        tag2.setName("Test2");
+        Tag savedTag2 = tagRepository.save(tag2);
+
+        Product product = new Product();
+        product.setName("Test");
+        product.setPrice(300);
+        Product savedProduct = productRepository.save(product);
+
+        savedProduct.getTags().add(savedTag1);
+        savedProduct.getTags().add(savedTag2);
+        savedProduct = productRepository.save(savedProduct);
+
+        assertNotNull(tag1.getId());
+        assertNotNull(tag2.getId());
+        assertEquals("Test", savedProduct.getName());
+        assertEquals("Test1", savedProduct.getTags().stream().filter(
+                i -> Objects.equals(i.getId(), savedTag1.getId())
+        ).findFirst().get().getName());
+        assertEquals("Test2", savedProduct.getTags().stream().filter(
+                i -> Objects.equals(i.getId(), savedTag2.getId())
         ).findFirst().get().getName());
     }
 }

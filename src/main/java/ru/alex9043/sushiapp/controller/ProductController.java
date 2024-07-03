@@ -16,6 +16,9 @@ import ru.alex9043.sushiapp.DTO.product.product.ProductResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.product.ProductsResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.review.ProductReviewRequestDTO;
 import ru.alex9043.sushiapp.DTO.product.review.ProductReviewResponseDTO;
+import ru.alex9043.sushiapp.DTO.product.tag.TagRequestDTO;
+import ru.alex9043.sushiapp.DTO.product.tag.TagResponseDTO;
+import ru.alex9043.sushiapp.DTO.product.tag.TagsIdRequestDTO;
 import ru.alex9043.sushiapp.service.ProductService;
 
 import java.util.List;
@@ -83,12 +86,38 @@ public class ProductController {
     @Operation(summary = "Add ingredients to a product")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Ingredient added successfully"),
+                    @ApiResponse(responseCode = "200", description = "Ingredients added successfully"),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
                     @ApiResponse(responseCode = "404", description = "Product not found"),
             })
     @PostMapping("/{productId}/ingredients")
     public ProductResponseDTO addIngredientsToProduct(@PathVariable Long productId, @RequestBody IngredientsIdRequestDTO ingredients) {
         return productService.addIngredientsToProduct(productId, ingredients);
+    }
+
+    @Operation(summary = "Crate a new tag")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Tag created successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input")
+            })
+    @PostMapping("/tags")
+    public TagResponseDTO createTag(
+            @Valid @RequestBody TagRequestDTO tagRequestDTO
+    ) {
+        return productService.createTag(tagRequestDTO);
+    }
+
+
+    @Operation(summary = "Add tags to a product")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Tags added successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input"),
+                    @ApiResponse(responseCode = "404", description = "Product not found"),
+            })
+    @PostMapping("/{productId}/tags")
+    public ProductResponseDTO addTagsToProduct(@PathVariable Long productId, @RequestBody TagsIdRequestDTO tags) {
+        return productService.addTagsToProduct(productId, tags);
     }
 }

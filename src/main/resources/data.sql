@@ -125,3 +125,11 @@ insert into product_ingredients (product_id, ingredients_id)
 values (4, 6);
 insert into product_ingredients (product_id, ingredients_id)
 values (4, 5);
+
+insert into tag (name)
+values ('Новинка');
+insert into tag (name)
+values ('Острое');
+
+insert into product_tags (product_id, tags_id)
+values (3, 2)

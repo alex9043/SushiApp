@@ -13,12 +13,17 @@ import ru.alex9043.sushiapp.DTO.product.product.ProductResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.product.ProductsResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.review.ProductReviewRequestDTO;
 import ru.alex9043.sushiapp.DTO.product.review.ProductReviewResponseDTO;
+import ru.alex9043.sushiapp.DTO.product.tag.TagRequestDTO;
+import ru.alex9043.sushiapp.DTO.product.tag.TagResponseDTO;
+import ru.alex9043.sushiapp.DTO.product.tag.TagsIdRequestDTO;
 import ru.alex9043.sushiapp.model.product.Ingredient;
 import ru.alex9043.sushiapp.model.product.Product;
 import ru.alex9043.sushiapp.model.product.ProductReview;
+import ru.alex9043.sushiapp.model.product.Tag;
 import ru.alex9043.sushiapp.repository.product.IngredientRepository;
 import ru.alex9043.sushiapp.repository.product.ProductRepository;
 import ru.alex9043.sushiapp.repository.product.ProductReviewRepository;
+import ru.alex9043.sushiapp.repository.product.TagRepository;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -34,6 +39,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductReviewRepository productReviewRepository;
     private final IngredientRepository ingredientRepository;
+    private final TagRepository tagRepository;
 
     public ProductsResponseDTO getProducts() {
         log.info("Fetching all products");
@@ -119,6 +125,27 @@ public class ProductService {
         }
 
         product.getIngredients().addAll(ingredients);
+        productRepository.save(product);
+
+        return mapToProductResponseDTO(product);
+    }
+
+    public TagResponseDTO createTag(TagRequestDTO tagRequestDTO) {
+        log.info("Creating a new tag");
+        Tag tag = modelMapper.map(tagRequestDTO, Tag.class);
+        return modelMapper.map(tagRepository.save(tag), TagResponseDTO.class);
+    }
+
+    public ProductResponseDTO addTagsToProduct(Long productId, TagsIdRequestDTO tagsId) {
+        log.info("Adding tags to product ID: {}", productId);
+        Product product = productRepository.findById(productId).orElseThrow(
+                () -> new IllegalArgumentException("Product not found"));
+        List<Tag> tags = tagRepository.findAllById(tagsId.getTags());
+        if (tags.size() != tagsId.getTags().size()) {
+            throw new IllegalArgumentException("Some tags not found");
+        }
+
+        product.getTags().addAll(tags);
         productRepository.save(product);
 
         return mapToProductResponseDTO(product);
