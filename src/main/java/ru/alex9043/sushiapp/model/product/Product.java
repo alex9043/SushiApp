@@ -27,6 +27,10 @@ public class Product {
     @Column(name = "price")
     private Integer price;
 
+    @Lob
+    @Column(name = "image")
+    private byte[] image;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private Set<ProductReview> productReviews = new LinkedHashSet<>();
@@ -51,6 +55,7 @@ public class Product {
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "categories_id"))
     private Set<Category> categories = new LinkedHashSet<>();
+
 
     @Override
     public final boolean equals(Object o) {

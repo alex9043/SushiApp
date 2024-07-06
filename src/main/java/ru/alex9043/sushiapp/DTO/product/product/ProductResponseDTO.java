@@ -13,6 +13,7 @@ public class ProductResponseDTO {
     private Long id;
     private String name;
     private Integer price;
+    private String base64image;
     private Set<ProductReviewResponseDTO> reviews;
     private Set<IngredientResponseDTO> ingredients;
     private Set<TagResponseDTO> tags;

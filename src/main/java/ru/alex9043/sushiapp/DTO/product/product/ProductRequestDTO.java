@@ -12,4 +12,5 @@ public class ProductRequestDTO {
     @NotNull(message = "Price must be specified")
     @Positive(message = "Price must be positive")
     private Integer price;
+    private String base64Image;
 }

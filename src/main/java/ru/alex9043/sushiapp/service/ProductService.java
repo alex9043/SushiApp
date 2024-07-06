@@ -24,6 +24,7 @@ import ru.alex9043.sushiapp.repository.product.*;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -71,16 +72,25 @@ public class ProductService {
         ).collect(Collectors.toSet());
         productResponseDTO.setIngredients(ingredientsResponseDTO);
 
+        productResponseDTO.setBase64image(Base64.getEncoder().encodeToString(product.getImage()));
+
         return productResponseDTO;
     }
 
     public ProductResponseDTO createProduct(ProductRequestDTO productRequestDTO) {
         log.info("Creating a new product with name: {}", productRequestDTO.getName());
+        byte[] imageBytes = new byte[0];
+        if (productRequestDTO.getBase64Image() != null) {
+            imageBytes = Base64.getDecoder().decode(productRequestDTO.getBase64Image());
+        }
         Product product = modelMapper.map(productRequestDTO, Product.class);
+        if (imageBytes.length != 0) {
+            product.setImage(imageBytes);
+        }
         log.debug("Created product with ID: {}", product.getId());
         Product createdProduct = productRepository.save(product);
-        log.debug("Created product with ID: {}", product.getId());
-        return modelMapper.map(createdProduct, ProductResponseDTO.class);
+        log.debug("Created product with ID: {}", createdProduct.getId());
+        return mapToProductResponseDTO(createdProduct);
     }
 
     public ProductReviewResponseDTO createReview(Long productId, ProductReviewRequestDTO reviewRequestDTO) {
