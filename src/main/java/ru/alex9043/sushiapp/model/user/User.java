@@ -11,9 +11,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.alex9043.sushiapp.model.product.Role;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.time.LocalDate;
+import java.util.*;
 
 @Getter
 @Setter
@@ -27,8 +26,17 @@ public class User implements UserDetails {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
     @Column(name = "phone", nullable = false, unique = true)
     private String phone;
+
+    @Column(name = "email", nullable = false)
+    private String email;
+
+    @Column(name = "dateOfBirth")
+    private LocalDate dateOfBirth;
 
     @Column(name = "password", nullable = false)
     private String password;
@@ -36,6 +44,13 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
+
+    @ToString.Exclude
+    @ManyToMany
+    @JoinTable(name = "users_addresses",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "addresses_id"))
+    private Set<Address> addresses = new LinkedHashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

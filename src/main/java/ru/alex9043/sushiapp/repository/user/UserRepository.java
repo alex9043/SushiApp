@@ -1,4 +1,4 @@
-package ru.alex9043.sushiapp.repository;
+package ru.alex9043.sushiapp.repository.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.alex9043.sushiapp.model.user.User;

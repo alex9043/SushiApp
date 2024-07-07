@@ -44,7 +44,8 @@ public class ProductController {
     @Operation(summary = "Create a new product")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Product created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input")
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "403", description = "Invalid credentials")
     })
     @PostMapping
     public ProductResponseDTO createProduct(@Valid @RequestBody ProductRequestDTO productRequestDTO) {
@@ -56,6 +57,7 @@ public class ProductController {
             value = {
                     @ApiResponse(responseCode = "200", description = "Review created successfully"),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
+                    @ApiResponse(responseCode = "403", description = "Invalid credentials"),
                     @ApiResponse(responseCode = "404", description = "Product not found"),
             })
     @PostMapping("/{productId}/reviews")
@@ -76,7 +78,8 @@ public class ProductController {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Ingredient created successfully"),
-                    @ApiResponse(responseCode = "400", description = "Invalid input")
+                    @ApiResponse(responseCode = "400", description = "Invalid input"),
+                    @ApiResponse(responseCode = "403", description = "Invalid credentials")
             })
     @PostMapping("/ingredients")
     public IngredientResponseDTO createIngredient(
@@ -91,6 +94,7 @@ public class ProductController {
             value = {
                     @ApiResponse(responseCode = "200", description = "Ingredients added successfully"),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
+                    @ApiResponse(responseCode = "403", description = "Invalid credentials"),
                     @ApiResponse(responseCode = "404", description = "Product not found"),
             })
     @PostMapping("/{productId}/ingredients")
@@ -102,7 +106,8 @@ public class ProductController {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Tag created successfully"),
-                    @ApiResponse(responseCode = "400", description = "Invalid input")
+                    @ApiResponse(responseCode = "400", description = "Invalid input"),
+                    @ApiResponse(responseCode = "403", description = "Invalid credentials")
             })
     @PostMapping("/tags")
     public TagResponseDTO createTag(
@@ -117,6 +122,7 @@ public class ProductController {
             value = {
                     @ApiResponse(responseCode = "200", description = "Tags added successfully"),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
+                    @ApiResponse(responseCode = "403", description = "Invalid credentials"),
                     @ApiResponse(responseCode = "404", description = "Product not found"),
             })
     @PostMapping("/{productId}/tags")
@@ -128,7 +134,8 @@ public class ProductController {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Category created successfully"),
-                    @ApiResponse(responseCode = "400", description = "Invalid input")
+                    @ApiResponse(responseCode = "400", description = "Invalid input"),
+                    @ApiResponse(responseCode = "403", description = "Invalid credentials")
             })
     @PostMapping("/categories")
     public CategoryResponseDTO createCategory(
@@ -143,6 +150,7 @@ public class ProductController {
             value = {
                     @ApiResponse(responseCode = "200", description = "Categories added successfully"),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
+                    @ApiResponse(responseCode = "403", description = "Invalid credentials"),
                     @ApiResponse(responseCode = "404", description = "Product not found"),
             })
     @PostMapping("/{productId}/categories")

@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.alex9043.sushiapp.model.user.User;
-import ru.alex9043.sushiapp.repository.UserRepository;
+import ru.alex9043.sushiapp.repository.user.UserRepository;
 
 @Service
 @RequiredArgsConstructor
