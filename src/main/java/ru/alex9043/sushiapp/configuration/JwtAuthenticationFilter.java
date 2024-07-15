@@ -14,8 +14,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.alex9043.sushiapp.model.user.UserService;
 import ru.alex9043.sushiapp.service.JwtService;
-import ru.alex9043.sushiapp.service.UserService;
 
 import java.io.IOException;
 
@@ -39,13 +39,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String jwt = requestHeader.substring(BEARER.length());
-        String phone = jwtService.extractPhone(jwt);
-
+        String phone = jwtService.extractPhoneForAccessToken(jwt);
         if (StringUtils.isNotEmpty(phone) && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userService
-                    .userDetailsService()
-                    .loadUserByUsername(phone);
-            if (jwtService.isTokenValid(jwt, userDetails)) {
+            UserDetails userDetails = userService.loadUserByUsername(phone);
+            if (jwtService.isAccessTokenValid(jwt, userDetails)) {
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
 
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
