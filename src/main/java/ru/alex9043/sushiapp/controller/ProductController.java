@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.alex9043.sushiapp.DTO.product.category.CategoriesIdRequestDTO;
@@ -47,6 +48,7 @@ public class ProductController {
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "403", description = "Invalid credentials")
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ProductResponseDTO createProduct(@Valid @RequestBody ProductRequestDTO productRequestDTO) {
         return productService.createProduct(productRequestDTO);
@@ -81,6 +83,7 @@ public class ProductController {
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
                     @ApiResponse(responseCode = "403", description = "Invalid credentials")
             })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/ingredients")
     public IngredientResponseDTO createIngredient(
             @Valid @RequestBody IngredientRequestDTO ingredientRequestDTO
@@ -97,6 +100,7 @@ public class ProductController {
                     @ApiResponse(responseCode = "403", description = "Invalid credentials"),
                     @ApiResponse(responseCode = "404", description = "Product not found"),
             })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/{productId}/ingredients")
     public ProductResponseDTO addIngredientsToProduct(@PathVariable Long productId, @RequestBody IngredientsIdRequestDTO ingredients) {
         return productService.addIngredientsToProduct(productId, ingredients);
@@ -109,6 +113,7 @@ public class ProductController {
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
                     @ApiResponse(responseCode = "403", description = "Invalid credentials")
             })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/tags")
     public TagResponseDTO createTag(
             @Valid @RequestBody TagRequestDTO tagRequestDTO
@@ -125,6 +130,7 @@ public class ProductController {
                     @ApiResponse(responseCode = "403", description = "Invalid credentials"),
                     @ApiResponse(responseCode = "404", description = "Product not found"),
             })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/{productId}/tags")
     public ProductResponseDTO addTagsToProduct(@PathVariable Long productId, @RequestBody TagsIdRequestDTO tags) {
         return productService.addTagsToProduct(productId, tags);
@@ -137,6 +143,7 @@ public class ProductController {
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
                     @ApiResponse(responseCode = "403", description = "Invalid credentials")
             })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/categories")
     public CategoryResponseDTO createCategory(
             @Valid @RequestBody CategoryRequestDTO categoryRequestDTO
@@ -153,6 +160,7 @@ public class ProductController {
                     @ApiResponse(responseCode = "403", description = "Invalid credentials"),
                     @ApiResponse(responseCode = "404", description = "Product not found"),
             })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/{productId}/categories")
     public ProductResponseDTO addCategoriesToProduct(@PathVariable Long productId, @RequestBody CategoriesIdRequestDTO categories) {
         return productService.addCategoriesToProduct(productId, categories);
