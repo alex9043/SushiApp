@@ -72,7 +72,11 @@ public class ProductService {
         ).collect(Collectors.toSet());
         productResponseDTO.setIngredients(ingredientsResponseDTO);
 
-        productResponseDTO.setBase64image(Base64.getEncoder().encodeToString(product.getImage()));
+        if (product.getImage() != null) {
+            productResponseDTO.setBase64image(Base64.getEncoder().encodeToString(product.getImage()));
+        } else {
+            productResponseDTO.setBase64image("");
+        }
 
         return productResponseDTO;
     }
@@ -86,6 +90,8 @@ public class ProductService {
         Product product = modelMapper.map(productRequestDTO, Product.class);
         if (imageBytes.length != 0) {
             product.setImage(imageBytes);
+        } else {
+            product.setImage(new byte[0]);
         }
         log.debug("Created product with ID: {}", product.getId());
         Product createdProduct = productRepository.save(product);

@@ -14,8 +14,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.alex9043.sushiapp.model.user.UserService;
 import ru.alex9043.sushiapp.service.JwtService;
+import ru.alex9043.sushiapp.service.UserService;
 
 import java.io.IOException;
 

@@ -7,7 +7,9 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,8 +21,11 @@ public class District {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @OneToMany(mappedBy = "district", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Address> addresses = new LinkedHashSet<>();
 
     @Override
     public final boolean equals(Object o) {

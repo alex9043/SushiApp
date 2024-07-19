@@ -21,12 +21,14 @@ public class RefreshToken {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(name = "token", nullable = false)
     private String token;
 
+    @Column(name = "expirationDate", nullable = false)
     private Date expirationDate;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Override

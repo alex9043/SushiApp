@@ -1,4 +1,4 @@
-package ru.alex9043.sushiapp.model.user;
+package ru.alex9043.sushiapp.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

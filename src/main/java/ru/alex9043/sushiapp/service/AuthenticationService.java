@@ -1,5 +1,6 @@
 package ru.alex9043.sushiapp.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -48,11 +49,10 @@ public class AuthenticationService {
         address.setDistrict(districtRepository.findById(request.getDistrictId()).orElseThrow(
                 () -> new IllegalArgumentException("District not found")));
 
-        addressRepository.save(address);
-
-        user.getAddresses().add(address);
-
         userRepository.save(user);
+        address.setUser(user);
+
+        addressRepository.save(address);
 
         return JwtAuthenticationResponseDTO.builder()
                 .accessToken(jwtService.generateAccessToken(user))
@@ -60,6 +60,7 @@ public class AuthenticationService {
                 .build();
     }
 
+    @Transactional
     public JwtAuthenticationResponseDTO signIn(SignInRequestDTO request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getPhone(),
@@ -77,6 +78,7 @@ public class AuthenticationService {
                 .build();
     }
 
+    @Transactional
     public JwtAuthenticationResponseDTO refreshToken(RefreshTokenRequestDTO refreshToken) {
         RefreshToken refresh_token = refreshTokenRepository.findByToken(
                 refreshToken.getRefreshToken()).orElseThrow(

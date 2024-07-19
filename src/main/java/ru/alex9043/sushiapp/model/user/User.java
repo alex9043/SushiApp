@@ -46,10 +46,11 @@ public class User implements UserDetails {
     private Role role;
 
     @ToString.Exclude
-    @ManyToMany
-    @JoinTable(name = "users_addresses",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "addresses_id"))
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<RefreshToken> refreshTokens = new LinkedHashSet<>();
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Address> addresses = new LinkedHashSet<>();
 
     @Override

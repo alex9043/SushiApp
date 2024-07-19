@@ -23,10 +23,6 @@ public class Address {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "district_id", nullable = false)
-    private District district;
-
     @Column(name = "street", nullable = false)
     private String street;
 
@@ -44,6 +40,14 @@ public class Address {
 
     @Column(name = "apartment_number", nullable = false)
     private Integer apartmentNumber;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "district_id", nullable = false)
+    private District district;
 
     @Override
     public final boolean equals(Object o) {

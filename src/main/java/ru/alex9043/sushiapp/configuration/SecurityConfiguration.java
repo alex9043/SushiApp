@@ -17,7 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ru.alex9043.sushiapp.model.user.UserService;
+import ru.alex9043.sushiapp.service.UserService;
 
 @Configuration
 @EnableWebSecurity
