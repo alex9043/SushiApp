@@ -15,6 +15,7 @@ import ru.alex9043.sushiapp.DTO.user.SignInRequestDTO;
 import ru.alex9043.sushiapp.DTO.user.SignUpRequestDTO;
 import ru.alex9043.sushiapp.model.product.Role;
 import ru.alex9043.sushiapp.model.user.Address;
+import ru.alex9043.sushiapp.model.user.District;
 import ru.alex9043.sushiapp.model.user.RefreshToken;
 import ru.alex9043.sushiapp.model.user.User;
 import ru.alex9043.sushiapp.repository.user.AddressRepository;
@@ -23,6 +24,7 @@ import ru.alex9043.sushiapp.repository.user.RefreshTokenRepository;
 import ru.alex9043.sushiapp.repository.user.UserRepository;
 
 import java.util.Date;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -37,26 +39,43 @@ public class AuthenticationService {
     private final ModelMapper modelMapper;
     private final AddressRepository addressRepository;
 
+    @Transactional
     public JwtAuthenticationResponseDTO signUp(SignUpRequestDTO request) {
-        if (!request.getConfirmPassword().equals(request.getPassword())) {
-            throw new IllegalArgumentException("Password mismatch!");
+        if (!Objects.equals(request.getPassword(), request.getConfirmPassword())) {
+            throw new IllegalArgumentException("Password mismatch");
         }
+
+        if (userRepository.findByPhone(request.getPhone()).isPresent()) {
+            throw new IllegalArgumentException("Phone already registered");
+        }
+
         User user = modelMapper.map(request, User.class);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.ROLE_USER);
+        user.setId(null);
+        log.debug("User in request - {}", user);
+
+        District district = districtRepository.findById(request.getDistrictId()).orElseThrow(
+                () -> new IllegalArgumentException("District not found"));
+
+        log.debug("District in request - {}", district.toString());
 
         Address address = modelMapper.map(request, Address.class);
-        address.setDistrict(districtRepository.findById(request.getDistrictId()).orElseThrow(
-                () -> new IllegalArgumentException("District not found")));
+        address.setDistrict(district);
+        address.setId(null);
 
-        userRepository.save(user);
-        address.setUser(user);
+        log.debug("Address in request - {}", address);
+
+        User savedUser = userRepository.save(user);
+        log.debug("Saved user id - {}", savedUser.getId());
+
+        address.setUser(savedUser);
 
         addressRepository.save(address);
 
         return JwtAuthenticationResponseDTO.builder()
-                .accessToken(jwtService.generateAccessToken(user))
-                .refreshToken(jwtService.generateRefreshToken(user))
+                .accessToken(jwtService.generateAccessToken(savedUser))
+                .refreshToken(jwtService.generateRefreshToken(savedUser))
                 .build();
     }
 

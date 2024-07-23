@@ -45,6 +45,7 @@ public class Address {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "district_id", nullable = false)
     private District district;
