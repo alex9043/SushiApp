@@ -12,3 +12,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  devtools:
+    remote:
+      secret: secret
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
