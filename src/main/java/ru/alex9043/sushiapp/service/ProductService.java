@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import ru.alex9043.sushiapp.DTO.product.CategoriesResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.category.CategoriesIdRequestDTO;
 import ru.alex9043.sushiapp.DTO.product.category.CategoryRequestDTO;
 import ru.alex9043.sushiapp.DTO.product.category.CategoryResponseDTO;
@@ -184,5 +185,17 @@ public class ProductService {
         productRepository.save(product);
 
         return mapToProductResponseDTO(product);
+    }
+
+    public CategoriesResponseDTO getCategories() {
+        log.info("Fetching all categories");
+        List<CategoryResponseDTO> categoryResponseDTOList = categoryRepository.findAll().stream().map(
+                c -> modelMapper.map(c, CategoryResponseDTO.class)
+        ).toList();
+        log.debug("Found {} categories", categoryResponseDTOList.size());
+
+        return CategoriesResponseDTO.builder()
+                .categories(categoryResponseDTOList)
+                .build();
     }
 }

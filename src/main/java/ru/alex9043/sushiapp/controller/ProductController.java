@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.alex9043.sushiapp.DTO.product.CategoriesResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.category.CategoriesIdRequestDTO;
 import ru.alex9043.sushiapp.DTO.product.category.CategoryRequestDTO;
 import ru.alex9043.sushiapp.DTO.product.category.CategoryResponseDTO;
@@ -164,5 +165,11 @@ public class ProductController {
     @PostMapping("/{productId}/categories")
     public ProductResponseDTO addCategoriesToProduct(@PathVariable Long productId, @RequestBody CategoriesIdRequestDTO categories) {
         return productService.addCategoriesToProduct(productId, categories);
+    }
+
+    @Operation(summary = "Get all categories")
+    @GetMapping("/categories")
+    public CategoriesResponseDTO getCategories() {
+        return productService.getCategories();
     }
 }
