@@ -171,3 +171,26 @@ insert into product_categories (categories_id, product_id)
 values (1, 5);
 insert into product_categories (categories_id, product_id)
 values (2, 5);
+
+
+insert into district (name)
+values ('Адмиралтейский район');
+insert into district (name)
+values ('Василеостровской район');
+insert into district (name)
+values ('Выборгский район');
+insert into district (name)
+values ('Калининский район');
+insert into district (name)
+values ('Кировский район');
+insert into district (name)
+values ('Колпинский район');
+insert into district (name)
+values ('Красногвардейский район');
+insert into district (name)
+values ('Красносельский район');
+
+
+
+
+

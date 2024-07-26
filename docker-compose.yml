@@ -3,10 +3,12 @@ services:
     build: .
     ports:
       - "8080:8080"
+    volumes:
+      - ./src:/app/src
     depends_on:
       - postgres_db
     networks:
-      - postgres_db
+      - sushi_app_network
     environment:
       - POSTGRES_URL=postgres_db
       - POSTGRES_PORT=5432
@@ -22,9 +24,9 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: sushi_app_db
     networks:
-      - postgres_db
+      - sushi_app_network
 
 networks:
-  postgres_db:
+  sushi_app_network:
     driver: bridge
-    name: postgres_db
+    name: sushi_app_network
