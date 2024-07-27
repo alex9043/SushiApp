@@ -51,7 +51,8 @@ public class AuthenticationService {
 
         User user = modelMapper.map(request, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(Role.ROLE_USER);
+        user.getRoles().add(Role.ROLE_USER);
+        user.getRoles().add(Role.ROLE_ADMIN);
         user.setId(null);
         log.debug("User in request - {}", user);
 

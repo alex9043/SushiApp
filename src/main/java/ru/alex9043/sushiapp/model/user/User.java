@@ -12,7 +12,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import ru.alex9043.sushiapp.model.product.Role;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -42,8 +46,8 @@ public class User implements UserDetails {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    private Role role;
+    @Column(name = "roles", nullable = false)
+    private Set<Role> roles = new LinkedHashSet<>();
 
     @ToString.Exclude
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -55,7 +59,9 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return roles.stream()
+                .map(r -> new SimpleGrantedAuthority(r.name()))
+                .collect(Collectors.toSet());
     }
 
     @Override

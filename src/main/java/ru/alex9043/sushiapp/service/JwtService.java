@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.alex9043.sushiapp.model.user.RefreshToken;
@@ -14,6 +15,7 @@ import ru.alex9043.sushiapp.repository.user.UserRepository;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,11 +37,11 @@ public class JwtService {
     }
 
     public String generateAccessToken(UserDetails userDetails) {
-        return generateToken(userDetails.getUsername(), ACCESS_TOKEN_SECRET, ACCESS_TOKEN_VALIDITY_SECONDS);
+        return generateToken(userDetails, ACCESS_TOKEN_SECRET, ACCESS_TOKEN_VALIDITY_SECONDS);
     }
 
     public String generateRefreshToken(UserDetails userDetails) {
-        String token = generateToken(userDetails.getUsername(), REFRESH_TOKEN_SECRET, REFRESH_TOKEN_VALIDITY_SECONDS);
+        String token = generateToken(userDetails, REFRESH_TOKEN_SECRET, REFRESH_TOKEN_VALIDITY_SECONDS);
         saveRefreshToken(token, userDetails);
         return token;
     }
@@ -65,9 +67,12 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    private String generateToken(String subject, SecretKey key, long validity) {
+    private String generateToken(UserDetails userDetails, SecretKey key, long validity) {
         return Jwts.builder()
-                .setSubject(subject)
+                .setSubject(userDetails.getUsername())
+                .claim("roles", userDetails.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList()))
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + validity))
                 .signWith(key, SignatureAlgorithm.HS256)
