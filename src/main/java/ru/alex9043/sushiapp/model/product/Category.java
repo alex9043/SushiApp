@@ -7,7 +7,9 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -21,6 +23,10 @@ public class Category {
     private Long id;
     @Column(name = "name")
     private String name;
+
+    @ManyToMany(mappedBy = "categories")
+    @ToString.Exclude
+    private Set<Product> products = new LinkedHashSet<>();
 
     @Override
     public final boolean equals(Object o) {

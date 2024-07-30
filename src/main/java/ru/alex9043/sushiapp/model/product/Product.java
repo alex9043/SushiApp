@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -25,15 +26,13 @@ public class Product {
     @Column(name = "name")
     private String name;
     @Column(name = "price")
-    private Integer price;
+    private BigDecimal price;
 
     @Lob
     @Column(name = "image")
     private byte[] image;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
-    private Set<ProductReview> productReviews = new LinkedHashSet<>();
+
 
     @ToString.Exclude
     @ManyToMany
@@ -56,6 +55,9 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "categories_id"))
     private Set<Category> categories = new LinkedHashSet<>();
 
+    @ToString.Exclude
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ProductReview> productReviews = new LinkedHashSet<>();
 
     @Override
     public final boolean equals(Object o) {

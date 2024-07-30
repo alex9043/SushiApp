@@ -1,4 +1,4 @@
-package ru.alex9043.sushiapp.model.user;
+package ru.alex9043.sushiapp.model.address;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
+import ru.alex9043.sushiapp.model.user.User;
 
 import java.util.Objects;
 

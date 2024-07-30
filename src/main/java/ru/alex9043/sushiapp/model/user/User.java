@@ -9,7 +9,8 @@ import org.hibernate.proxy.HibernateProxy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.alex9043.sushiapp.model.product.Role;
+import ru.alex9043.sushiapp.model.address.Address;
+import ru.alex9043.sushiapp.model.product.ProductReview;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -36,7 +37,7 @@ public class User implements UserDetails {
     @Column(name = "phone", nullable = false, unique = true)
     private String phone;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "dateOfBirth")
@@ -56,6 +57,10 @@ public class User implements UserDetails {
     @ToString.Exclude
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Address> addresses = new LinkedHashSet<>();
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ProductReview> productReviews = new LinkedHashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

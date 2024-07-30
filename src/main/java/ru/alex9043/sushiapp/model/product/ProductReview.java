@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.data.annotation.CreatedDate;
+import ru.alex9043.sushiapp.model.user.User;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -26,15 +27,19 @@ public class ProductReview {
     @Column(name = "rating")
     private Integer rating;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
-
     @CreatedDate
     private Instant createdDate;
 
     @Column(columnDefinition = "TEXT")
     private String reviewText;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
     @Override
     public final boolean equals(Object o) {

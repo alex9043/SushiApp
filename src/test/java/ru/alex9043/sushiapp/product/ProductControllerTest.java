@@ -24,14 +24,15 @@ import ru.alex9043.sushiapp.DTO.product.category.CategoryResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.ingredient.IngredientResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.product.ProductResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.tag.TagResponseDTO;
-import ru.alex9043.sushiapp.model.product.Role;
-import ru.alex9043.sushiapp.model.user.District;
+import ru.alex9043.sushiapp.model.address.District;
+import ru.alex9043.sushiapp.model.user.Role;
 import ru.alex9043.sushiapp.model.user.User;
 import ru.alex9043.sushiapp.repository.user.DistrictRepository;
 import ru.alex9043.sushiapp.repository.user.RefreshTokenRepository;
 import ru.alex9043.sushiapp.repository.user.UserRepository;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -89,12 +90,12 @@ public class ProductControllerTest {
         accessToken = jsonResponse.get("accessToken").asText();
         log.debug("Access token: {}", accessToken);
         User user = userRepository.findByPhone("+77777777777").orElseThrow();
-        user.setRole(Role.ROLE_ADMIN);
+        user.getRoles().addAll(Set.of(Role.ROLE_USER, Role.ROLE_ADMIN));
         userRepository.save(user);
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         refreshTokenRepository.deleteAll();
         userRepository.deleteAll();
         districtRepository.deleteAll();

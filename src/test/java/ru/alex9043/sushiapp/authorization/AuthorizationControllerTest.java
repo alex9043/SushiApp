@@ -17,8 +17,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import ru.alex9043.sushiapp.model.product.Role;
-import ru.alex9043.sushiapp.model.user.District;
+import ru.alex9043.sushiapp.model.address.District;
+import ru.alex9043.sushiapp.model.user.Role;
 import ru.alex9043.sushiapp.model.user.User;
 import ru.alex9043.sushiapp.repository.user.DistrictRepository;
 import ru.alex9043.sushiapp.repository.user.RefreshTokenRepository;
@@ -107,7 +107,7 @@ public class AuthorizationControllerTest {
         user.setPhone("+77777777777");
         user.setPassword(passwordEncoder.encode("Password"));
         user.setEmail("test@test.test");
-        user.setRole(Role.ROLE_USER);
+        user.getRoles().add(Role.ROLE_USER);
         user = userRepository.save(user);
 
         ObjectNode userNode = objectMapper.createObjectNode();
@@ -146,7 +146,7 @@ public class AuthorizationControllerTest {
         user.setPhone("+777777777777");
         user.setPassword(passwordEncoder.encode("Password"));
         user.setEmail("test@test.test");
-        user.setRole(Role.ROLE_USER);
+        user.getRoles().add(Role.ROLE_USER);
         user = userRepository.save(user);
 
         ObjectNode userNode = objectMapper.createObjectNode();

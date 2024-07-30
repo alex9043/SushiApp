@@ -13,10 +13,10 @@ import ru.alex9043.sushiapp.DTO.user.JwtAuthenticationResponseDTO;
 import ru.alex9043.sushiapp.DTO.user.RefreshTokenRequestDTO;
 import ru.alex9043.sushiapp.DTO.user.SignInRequestDTO;
 import ru.alex9043.sushiapp.DTO.user.SignUpRequestDTO;
-import ru.alex9043.sushiapp.model.product.Role;
-import ru.alex9043.sushiapp.model.user.Address;
-import ru.alex9043.sushiapp.model.user.District;
+import ru.alex9043.sushiapp.model.address.Address;
+import ru.alex9043.sushiapp.model.address.District;
 import ru.alex9043.sushiapp.model.user.RefreshToken;
+import ru.alex9043.sushiapp.model.user.Role;
 import ru.alex9043.sushiapp.model.user.User;
 import ru.alex9043.sushiapp.repository.user.AddressRepository;
 import ru.alex9043.sushiapp.repository.user.DistrictRepository;
@@ -25,6 +25,7 @@ import ru.alex9043.sushiapp.repository.user.UserRepository;
 
 import java.util.Date;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -51,8 +52,7 @@ public class AuthenticationService {
 
         User user = modelMapper.map(request, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.getRoles().add(Role.ROLE_USER);
-        user.getRoles().add(Role.ROLE_ADMIN);
+        user.getRoles().addAll(Set.of(Role.ROLE_USER, Role.ROLE_ADMIN));
         user.setId(null);
         log.debug("User in request - {}", user);
 

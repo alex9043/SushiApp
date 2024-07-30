@@ -1,4 +1,4 @@
-package ru.alex9043.sushiapp.model.user;
+package ru.alex9043.sushiapp.model.address;
 
 import jakarta.persistence.*;
 import lombok.Getter;

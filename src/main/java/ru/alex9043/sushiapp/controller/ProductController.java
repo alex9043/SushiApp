@@ -1,6 +1,7 @@
 package ru.alex9043.sushiapp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -9,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.alex9043.sushiapp.DTO.product.CategoriesResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.category.CategoriesIdRequestDTO;
+import ru.alex9043.sushiapp.DTO.product.category.CategoriesResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.category.CategoryRequestDTO;
 import ru.alex9043.sushiapp.DTO.product.category.CategoryResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.ingredient.IngredientRequestDTO;
@@ -38,6 +39,11 @@ public class ProductController {
     private final ProductService productService;
 
     @Operation(summary = "Get all products")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Products get successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProductsResponseDTO.class))),
+    })
     @GetMapping
     public ProductsResponseDTO getProducts() {
         return productService.getProducts();
@@ -45,10 +51,14 @@ public class ProductController {
 
     @Operation(summary = "Create a new product")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Product created successfully"),
+            @ApiResponse(responseCode = "200", description = "Product created successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProductResponseDTO.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "403", description = "Invalid credentials")
     })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Product creation request",
+            required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductRequestDTO.class)))
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ProductResponseDTO createProduct(@Valid @RequestBody ProductRequestDTO productRequestDTO) {
@@ -58,7 +68,9 @@ public class ProductController {
     @Operation(summary = "Crate a new review for a product")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Review created successfully"),
+                    @ApiResponse(responseCode = "200", description = "Review created successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ProductReviewResponseDTO.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
                     @ApiResponse(responseCode = "403", description = "Invalid credentials"),
                     @ApiResponse(responseCode = "404", description = "Product not found"),
@@ -72,6 +84,11 @@ public class ProductController {
     }
 
     @Operation(summary = "Get all reviews for a product")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reviews get successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProductReviewResponseDTO.class))),
+    })
     @GetMapping("/{productId}/reviews")
     public List<ProductReviewResponseDTO> getReviews(@PathVariable Long productId) {
         return productService.getReviews(productId);
@@ -80,7 +97,9 @@ public class ProductController {
     @Operation(summary = "Crate a new ingredient")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Ingredient created successfully"),
+                    @ApiResponse(responseCode = "200", description = "Ingredient created successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = IngredientResponseDTO.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
                     @ApiResponse(responseCode = "403", description = "Invalid credentials")
             })
