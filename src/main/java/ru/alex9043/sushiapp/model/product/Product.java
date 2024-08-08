@@ -32,8 +32,6 @@ public class Product {
     @Column(name = "image")
     private byte[] image;
 
-
-
     @ToString.Exclude
     @ManyToMany
     @JoinTable(name = "Product_ingredients",

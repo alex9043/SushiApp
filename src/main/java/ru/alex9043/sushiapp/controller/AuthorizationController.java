@@ -1,6 +1,7 @@
 package ru.alex9043.sushiapp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -24,9 +25,14 @@ public class AuthorizationController {
 
     @Operation(summary = "Sign up")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Sign up successfully"),
+            @ApiResponse(responseCode = "200", description = "Sign up successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = JwtAuthenticationResponseDTO.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input")
     })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Product creation request",
+            required = true, content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = SignUpRequestDTO.class)))
     @PostMapping("/sign-up")
     public JwtAuthenticationResponseDTO signUp(@RequestBody SignUpRequestDTO request) {
         return authenticationService.signUp(request);
@@ -34,10 +40,15 @@ public class AuthorizationController {
 
     @Operation(summary = "Sign in")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Sign in successfully"),
+            @ApiResponse(responseCode = "200", description = "Sign in successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = JwtAuthenticationResponseDTO.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "403", description = "Invalid credentials")
     })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Product creation request",
+            required = true, content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = SignInRequestDTO.class)))
     @PostMapping("/sign-in")
     public JwtAuthenticationResponseDTO signIn(@RequestBody SignInRequestDTO request) {
         return authenticationService.signIn(request);
@@ -45,10 +56,15 @@ public class AuthorizationController {
 
     @Operation(summary = "Refresh Token")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Sign in successfully"),
+            @ApiResponse(responseCode = "200", description = "Sign in successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = JwtAuthenticationResponseDTO.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "403", description = "Invalid credentials")
     })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Product creation request",
+            required = true, content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = RefreshTokenRequestDTO.class)))
     @PostMapping("/refresh-token")
     public JwtAuthenticationResponseDTO refreshToken(@RequestBody RefreshTokenRequestDTO refreshToken) {
         return authenticationService.refreshToken(refreshToken);

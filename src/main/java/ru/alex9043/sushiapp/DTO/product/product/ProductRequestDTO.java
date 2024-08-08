@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Schema(description = "DTO for creating a product")
 @Data
 public class ProductRequestDTO {
@@ -13,6 +15,6 @@ public class ProductRequestDTO {
     private String name;
     @NotNull(message = "Price must be specified")
     @Positive(message = "Price must be positive")
-    private Integer price;
+    private BigDecimal price;
     private String base64Image;
 }

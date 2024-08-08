@@ -9,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.alex9043.sushiapp.model.product.*;
 import ru.alex9043.sushiapp.repository.product.*;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,20 +37,20 @@ public class ProductRepositoryTest {
     public void testSaveProduct() {
         Product product = new Product();
         product.setName("Test");
-        product.setPrice(300);
+        product.setPrice(BigDecimal.valueOf(300.0));
 
         Product savedProduct = productRepository.save(product);
 
         assertNotNull(savedProduct.getId());
         assertEquals("Test", savedProduct.getName());
-        assertEquals(300, savedProduct.getPrice());
+        assertEquals(BigDecimal.valueOf(300.0), savedProduct.getPrice());
     }
 
     @Test
     public void testSaveReview() {
         Product product = new Product();
         product.setName("Test");
-        product.setPrice(300);
+        product.setPrice(BigDecimal.valueOf(300.0));
 
         Product savedProduct = productRepository.save(product);
 
@@ -80,7 +81,7 @@ public class ProductRepositoryTest {
 
         Product product = new Product();
         product.setName("Test");
-        product.setPrice(300);
+        product.setPrice(BigDecimal.valueOf(300.0));
         Product savedProduct = productRepository.save(product);
 
         savedProduct.getIngredients().add(savedIngredient1);
@@ -110,7 +111,7 @@ public class ProductRepositoryTest {
 
         Product product = new Product();
         product.setName("Test");
-        product.setPrice(300);
+        product.setPrice(BigDecimal.valueOf(300.0));
         Product savedProduct = productRepository.save(product);
 
         savedProduct.getTags().add(savedTag1);
@@ -140,7 +141,7 @@ public class ProductRepositoryTest {
 
         Product product = new Product();
         product.setName("Test");
-        product.setPrice(300);
+        product.setPrice(BigDecimal.valueOf(300.0));
         Product savedProduct = productRepository.save(product);
 
         savedProduct.getCategories().add(savedCategory1);

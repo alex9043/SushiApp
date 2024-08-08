@@ -5,11 +5,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.alex9043.sushiapp.DTO.error.ErrorMessageDTO;
 import ru.alex9043.sushiapp.DTO.product.category.CategoriesIdRequestDTO;
 import ru.alex9043.sushiapp.DTO.product.category.CategoriesResponseDTO;
 import ru.alex9043.sushiapp.DTO.product.category.CategoryRequestDTO;
@@ -49,16 +51,20 @@ public class ProductController {
         return productService.getProducts();
     }
 
-    @Operation(summary = "Create a new product")
+    @Operation(summary = "Create a new product",
+            security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Product created successfully",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ProductResponseDTO.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
-            @ApiResponse(responseCode = "403", description = "Invalid credentials")
+            @ApiResponse(responseCode = "403", description = "Invalid credentials",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorMessageDTO.class)))
     })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Product creation request",
-            required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductRequestDTO.class)))
+            required = true, content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ProductRequestDTO.class)))
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ProductResponseDTO createProduct(@Valid @RequestBody ProductRequestDTO productRequestDTO) {
@@ -72,9 +78,14 @@ public class ProductController {
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ProductReviewResponseDTO.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
-                    @ApiResponse(responseCode = "403", description = "Invalid credentials"),
+                    @ApiResponse(responseCode = "403", description = "Invalid credentials",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessageDTO.class))),
                     @ApiResponse(responseCode = "404", description = "Product not found"),
             })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Product creation request",
+            required = true, content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ProductReviewRequestDTO.class)))
     @PostMapping("/{productId}/reviews")
     public ProductReviewResponseDTO createReview(
             @PathVariable Long productId,
@@ -94,15 +105,21 @@ public class ProductController {
         return productService.getReviews(productId);
     }
 
-    @Operation(summary = "Crate a new ingredient")
+    @Operation(summary = "Crate a new ingredient",
+            security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Ingredient created successfully",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = IngredientResponseDTO.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
-                    @ApiResponse(responseCode = "403", description = "Invalid credentials")
+                    @ApiResponse(responseCode = "403", description = "Invalid credentials",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessageDTO.class)))
             })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Product creation request",
+            required = true, content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = IngredientRequestDTO.class)))
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/ingredients")
     public IngredientResponseDTO createIngredient(
@@ -112,27 +129,45 @@ public class ProductController {
     }
 
 
-    @Operation(summary = "Add ingredients to a product")
+    @Operation(summary = "Add ingredients to a product",
+            security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Ingredients added successfully"),
+                    @ApiResponse(responseCode = "200", description = "Ingredients added successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ProductResponseDTO.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
-                    @ApiResponse(responseCode = "403", description = "Invalid credentials"),
+                    @ApiResponse(responseCode = "403", description = "Invalid credentials",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessageDTO.class))),
                     @ApiResponse(responseCode = "404", description = "Product not found"),
             })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Product creation request",
+            required = true, content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = IngredientsIdRequestDTO.class)))
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/{productId}/ingredients")
-    public ProductResponseDTO addIngredientsToProduct(@PathVariable Long productId, @RequestBody IngredientsIdRequestDTO ingredients) {
+    public ProductResponseDTO addIngredientsToProduct(
+            @PathVariable Long productId,
+            @RequestBody IngredientsIdRequestDTO ingredients) {
         return productService.addIngredientsToProduct(productId, ingredients);
     }
 
-    @Operation(summary = "Crate a new tag")
+    @Operation(summary = "Crate a new tag",
+            security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Tag created successfully"),
+                    @ApiResponse(responseCode = "200", description = "Tag created successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = TagResponseDTO.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
-                    @ApiResponse(responseCode = "403", description = "Invalid credentials")
+                    @ApiResponse(responseCode = "403", description = "Invalid credentials",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessageDTO.class)))
             })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Product creation request",
+            required = true, content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = TagRequestDTO.class)))
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/tags")
     public TagResponseDTO createTag(
@@ -142,27 +177,45 @@ public class ProductController {
     }
 
 
-    @Operation(summary = "Add tags to a product")
+    @Operation(summary = "Add tags to a product",
+            security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Tags added successfully"),
+                    @ApiResponse(responseCode = "200", description = "Tags added successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ProductResponseDTO.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
-                    @ApiResponse(responseCode = "403", description = "Invalid credentials"),
+                    @ApiResponse(responseCode = "403", description = "Invalid credentials",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessageDTO.class))),
                     @ApiResponse(responseCode = "404", description = "Product not found"),
             })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Product creation request",
+            required = true, content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = TagsIdRequestDTO.class)))
     @PostMapping("/{productId}/tags")
-    public ProductResponseDTO addTagsToProduct(@PathVariable Long productId, @RequestBody TagsIdRequestDTO tags) {
+    public ProductResponseDTO addTagsToProduct(
+            @PathVariable Long productId,
+            @RequestBody TagsIdRequestDTO tags) {
         return productService.addTagsToProduct(productId, tags);
     }
 
-    @Operation(summary = "Crate a new category")
+    @Operation(summary = "Crate a new category",
+            security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Category created successfully"),
+                    @ApiResponse(responseCode = "200", description = "Category created successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = CategoryResponseDTO.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
-                    @ApiResponse(responseCode = "403", description = "Invalid credentials")
+                    @ApiResponse(responseCode = "403", description = "Invalid credentials",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessageDTO.class)))
             })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Product creation request",
+            required = true, content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = CategoryRequestDTO.class)))
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/categories")
     public CategoryResponseDTO createCategory(
@@ -172,21 +225,36 @@ public class ProductController {
     }
 
 
-    @Operation(summary = "Add categories to a product")
+    @Operation(summary = "Add categories to a product",
+            security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Categories added successfully"),
+                    @ApiResponse(responseCode = "200", description = "Categories added successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ProductResponseDTO.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
-                    @ApiResponse(responseCode = "403", description = "Invalid credentials"),
+                    @ApiResponse(responseCode = "403", description = "Invalid credentials",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessageDTO.class))),
                     @ApiResponse(responseCode = "404", description = "Product not found"),
             })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Product creation request",
+            required = true, content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = CategoriesIdRequestDTO.class)))
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/{productId}/categories")
-    public ProductResponseDTO addCategoriesToProduct(@PathVariable Long productId, @RequestBody CategoriesIdRequestDTO categories) {
+    public ProductResponseDTO addCategoriesToProduct(
+            @PathVariable Long productId,
+            @RequestBody CategoriesIdRequestDTO categories) {
         return productService.addCategoriesToProduct(productId, categories);
     }
 
     @Operation(summary = "Get all categories")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Products get successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CategoriesResponseDTO.class))),
+    })
     @GetMapping("/categories")
     public CategoriesResponseDTO getCategories() {
         return productService.getCategories();

@@ -27,13 +27,16 @@ import ru.alex9043.sushiapp.DTO.product.tag.TagResponseDTO;
 import ru.alex9043.sushiapp.model.address.District;
 import ru.alex9043.sushiapp.model.user.Role;
 import ru.alex9043.sushiapp.model.user.User;
+import ru.alex9043.sushiapp.repository.product.ProductRepository;
 import ru.alex9043.sushiapp.repository.user.DistrictRepository;
 import ru.alex9043.sushiapp.repository.user.RefreshTokenRepository;
 import ru.alex9043.sushiapp.repository.user.UserRepository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,6 +58,8 @@ public class ProductControllerTest {
     @Autowired
     private UserRepository userRepository;
     private String accessToken;
+    @Autowired
+    private ProductRepository productRepository;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -99,42 +104,85 @@ public class ProductControllerTest {
         refreshTokenRepository.deleteAll();
         userRepository.deleteAll();
         districtRepository.deleteAll();
+        productRepository.deleteAll();
+    }
+
+    private ObjectNode createProduct(String name, BigDecimal price, String base64Image) {
+        ObjectNode productNode = objectMapper.createObjectNode();
+        productNode.put("name", name);
+        productNode.put("price", price);
+        if (base64Image != null) {
+            productNode.put("base64Image", base64Image);
+        }
+        return productNode;
+    }
+
+    private ObjectNode createReview(String reviewerName, String reviewText, Integer rating) {
+        ObjectNode reviewNode = objectMapper.createObjectNode();
+        reviewNode.put("reviewerName", reviewerName);
+        reviewNode.put("reviewText", reviewText);
+        reviewNode.put("rating", rating);
+        return reviewNode;
+    }
+
+    private ObjectNode createIngredient(String name) {
+        ObjectNode ingredientNode = objectMapper.createObjectNode();
+        ingredientNode.put("name", name);
+        return ingredientNode;
+    }
+
+    private ResultActions postObjectNode(String urlTemplate, ObjectNode node) throws Exception {
+        return mockMvc.perform(post(urlTemplate)
+                        .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(node.toString()))
+                .andExpect(status().isOk());
+    }
+
+    private MvcResult getIngredientResponse(ObjectNode ingredientNode1) throws Exception {
+        return postObjectNode("/products/ingredients", ingredientNode1).andReturn();
+    }
+
+    @Test
+    public void testGetEmptyProductList() throws Exception {
+        mockMvc.perform(get("/products"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.products").isEmpty());
+    }
+
+
+    @Test
+    public void testGetProductList() throws Exception {
+        ObjectNode productNode = createProduct("test", BigDecimal.valueOf(100), null);
+
+        postObjectNode("/products", productNode);
+
+        mockMvc.perform(get("/products"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.products[0].name").value("test"))
+                .andExpect(jsonPath("$.products[0].price").value(100));
     }
 
     @Transactional
     @Rollback
     @Test
     public void testCreateProduct() throws Exception {
-        ObjectNode productNode = objectMapper.createObjectNode();
-        productNode.put("name", "test");
-        productNode.put("price", 100);
+        ObjectNode productNode = createProduct("test", BigDecimal.valueOf(100), null);
 
-        mockMvc.perform(post("/products")
-                        .header("Authorization", "Bearer " + accessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(productNode.toString()))
-                .andExpect(status().isOk());
+        postObjectNode("/products", productNode);
     }
 
     @Transactional
     @Rollback
     @Test
     public void testCreateProductAndReview() throws Exception {
-        ObjectNode productNode = objectMapper.createObjectNode();
-        productNode.put("name", "test");
-        productNode.put("price", 100);
+        ObjectNode productNode = createProduct("test", BigDecimal.valueOf(100), null);
 
-        ObjectNode reviewNode = objectMapper.createObjectNode();
-        reviewNode.put("reviewerName", "test");
-        reviewNode.put("reviewText", "test");
-        reviewNode.put("rating", 5);
+        ObjectNode reviewNode = createReview("test", "test", 5);
 
-        MvcResult productResponse = mockMvc.perform(post("/products")
-                        .header("Authorization", "Bearer " + accessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(productNode.toString()))
-                .andExpect(status().isOk())
-                .andReturn();
+        ResultActions resultActions = postObjectNode("/products", productNode);
+
+        MvcResult productResponse = resultActions.andReturn();
 
         Long productId = objectMapper.readValue(
                 productResponse.getResponse().getContentAsString(), ProductResponseDTO.class).getId();
@@ -153,36 +201,16 @@ public class ProductControllerTest {
     @Rollback
     @Test
     public void testCreateIngredientAndPutInProduct() throws Exception {
-        ObjectNode productNode = objectMapper.createObjectNode();
-        productNode.put("name", "test");
-        productNode.put("price", 100);
+        ObjectNode productNode = createProduct("test", BigDecimal.valueOf(100), null);
 
-        ObjectNode ingredientNode1 = objectMapper.createObjectNode();
-        ingredientNode1.put("name", "test1");
-        MvcResult ingredientResponse1 = mockMvc.perform(post("/products/ingredients")
-                        .header("Authorization", "Bearer " + accessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(ingredientNode1.toString()))
-                .andExpect(status().isOk())
-                .andReturn();
+        ObjectNode ingredientNode1 = createIngredient("test1");
+        MvcResult ingredientResponse1 = getIngredientResponse(ingredientNode1);
 
-        ObjectNode ingredientNode2 = objectMapper.createObjectNode();
-        ingredientNode2.put("name", "test2");
-        MvcResult ingredientResponse2 = mockMvc.perform(post("/products/ingredients")
-                        .header("Authorization", "Bearer " + accessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(ingredientNode2.toString()))
-                .andExpect(status().isOk())
-                .andReturn();
+        ObjectNode ingredientNode2 = createIngredient("test2");
+        MvcResult ingredientResponse2 = getIngredientResponse(ingredientNode2);
 
-        ObjectNode ingredientNode3 = objectMapper.createObjectNode();
-        ingredientNode3.put("name", "test3");
-        MvcResult ingredientResponse3 = mockMvc.perform(post("/products/ingredients")
-                        .header("Authorization", "Bearer " + accessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(ingredientNode3.toString()))
-                .andExpect(status().isOk())
-                .andReturn();
+        ObjectNode ingredientNode3 = createIngredient("test3");
+        MvcResult ingredientResponse3 = getIngredientResponse(ingredientNode3);
 
         Long ingredientId1 = objectMapper.readValue(
                 ingredientResponse1.getResponse().getContentAsString(), IngredientResponseDTO.class).getId();
@@ -198,12 +226,9 @@ public class ProductControllerTest {
         ObjectNode ingredientsRequest = objectMapper.createObjectNode();
         ingredientsRequest.set("ingredients", ingredients);
 
-        MvcResult productResponse = mockMvc.perform(post("/products")
-                        .header("Authorization", "Bearer " + accessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(productNode.toString()))
-                .andExpect(status().isOk())
-                .andReturn();
+        ResultActions resultActions = postObjectNode("/products", productNode);
+
+        MvcResult productResponse = resultActions.andReturn();
 
         Long productId = objectMapper.readValue(
                 productResponse.getResponse().getContentAsString(), ProductResponseDTO.class).getId();
@@ -221,18 +246,13 @@ public class ProductControllerTest {
 
     @Test
     public void testCreateTagAndPutInProduct() throws Exception {
-        ObjectNode productNode = objectMapper.createObjectNode();
-        productNode.put("name", "test");
-        productNode.put("price", 100);
+        ObjectNode productNode = createProduct("test", BigDecimal.valueOf(100), null);
 
         ObjectNode tagNode1 = objectMapper.createObjectNode();
         tagNode1.put("name", "test1");
-        MvcResult tagResponse1 = mockMvc.perform(post("/products/tags")
-                        .header("Authorization", "Bearer " + accessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(tagNode1.toString()))
-                .andExpect(status().isOk())
-                .andReturn();
+
+        ResultActions resultActions = postObjectNode("/products/tags", tagNode1);
+        MvcResult tagResponse1 = resultActions.andReturn();
 
         ObjectNode tagNode2 = objectMapper.createObjectNode();
         tagNode2.put("name", "test2");
@@ -289,9 +309,7 @@ public class ProductControllerTest {
 
     @Test
     public void testCreateCategoryAndPutInProduct() throws Exception {
-        ObjectNode productNode = objectMapper.createObjectNode();
-        productNode.put("name", "test");
-        productNode.put("price", 100);
+        ObjectNode productNode = createProduct("test", BigDecimal.valueOf(100), null);
 
         ObjectNode categoryNode1 = objectMapper.createObjectNode();
         categoryNode1.put("name", "test1");

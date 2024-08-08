@@ -33,8 +33,8 @@ public class ProductReview {
     @Column(columnDefinition = "TEXT")
     private String reviewText;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(optional = false)
