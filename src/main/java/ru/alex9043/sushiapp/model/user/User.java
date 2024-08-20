@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.alex9043.sushiapp.model.address.Address;
+import ru.alex9043.sushiapp.model.order.Cart;
 import ru.alex9043.sushiapp.model.product.ProductReview;
 
 import java.time.LocalDate;
@@ -61,6 +62,11 @@ public class User implements UserDetails {
     @ToString.Exclude
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProductReview> productReviews = new LinkedHashSet<>();
+
+    @ToString.Exclude
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

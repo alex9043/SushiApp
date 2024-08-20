@@ -5,12 +5,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import ru.alex9043.sushiapp.model.user.User;
 import ru.alex9043.sushiapp.repository.user.UserRepository;
 
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+
+    public User getUserByPhone(String phone) {
+        return userRepository.findByPhone(phone)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
 
     @Override
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
