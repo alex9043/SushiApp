@@ -1,4 +1,4 @@
-package ru.alex9043.sushiapp.DTO.order;
+package ru.alex9043.sushiapp.DTO.order.cart;
 
 import lombok.Data;
 

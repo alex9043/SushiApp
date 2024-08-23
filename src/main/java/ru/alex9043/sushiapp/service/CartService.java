@@ -6,9 +6,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import ru.alex9043.sushiapp.DTO.order.CartItemResponseDTO;
-import ru.alex9043.sushiapp.DTO.order.CartRequestDTO;
-import ru.alex9043.sushiapp.DTO.order.CartResponseDTO;
+import ru.alex9043.sushiapp.DTO.order.cart.CartItemResponseDTO;
+import ru.alex9043.sushiapp.DTO.order.cart.CartProductRequestDTO;
+import ru.alex9043.sushiapp.DTO.order.cart.CartRequestDTO;
+import ru.alex9043.sushiapp.DTO.order.cart.CartResponseDTO;
 import ru.alex9043.sushiapp.model.order.Cart;
 import ru.alex9043.sushiapp.model.order.CartItem;
 import ru.alex9043.sushiapp.model.product.Product;
@@ -54,13 +55,13 @@ public class CartService {
                 .build();
     }
 
-    public CartResponseDTO addProductIntoCart(UserDetails userDetails, CartRequestDTO cartRequestDTO) {
+    public CartResponseDTO addProductIntoCart(UserDetails userDetails, CartProductRequestDTO cartProductRequestDTO) {
         User currentUser = userService.getUserByPhone(userDetails.getUsername());
         Cart cart = currentUser.getCart();
         if (cart != null) {
             Set<CartItem> cartItems = cartItemRepository.findAllByCart(cart);
-            log.debug("Request product id - {}", cartRequestDTO.getProductId());
-            Product product = productRepository.findById(cartRequestDTO.getProductId()).orElseThrow(
+            log.debug("Request product id - {}", cartProductRequestDTO.getProductId());
+            Product product = productRepository.findById(cartProductRequestDTO.getProductId()).orElseThrow(
                     () -> new IllegalArgumentException("Product not found")
             );
             CartItem cartItem = cartItems.stream().filter(
@@ -85,7 +86,7 @@ public class CartService {
         cart = cartRepository.save(cart);
         currentUser.setCart(cart);
         userRepository.save(currentUser);
-        Product product = productRepository.findById(cartRequestDTO.getProductId()).orElseThrow(
+        Product product = productRepository.findById(cartProductRequestDTO.getProductId()).orElseThrow(
                 () -> new IllegalArgumentException("Product not found")
         );
         CartItem cartItem = CartItem.builder()
@@ -98,13 +99,13 @@ public class CartService {
         return getCartResponseDTO(cart, cartItems);
     }
 
-    public CartResponseDTO removeProductIntoCart(UserDetails userDetails, CartRequestDTO cartRequestDTO) {
+    public CartResponseDTO removeProductIntoCart(UserDetails userDetails, CartProductRequestDTO cartProductRequestDTO) {
         User currentUser = userService.getUserByPhone(userDetails.getUsername());
         Cart cart = currentUser.getCart();
         if (cart != null) {
             Set<CartItem> cartItems = cartItemRepository.findAllByCart(cart);
             CartItem cartItem = cartItems.stream().filter(
-                    i -> Objects.equals(i.getProduct().getId(), cartRequestDTO.getProductId())
+                    i -> Objects.equals(i.getProduct().getId(), cartProductRequestDTO.getProductId())
             ).findFirst().orElse(null);
             if (cartItem == null) {
                 throw new IllegalArgumentException("Product not found");
@@ -135,5 +136,32 @@ public class CartService {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    public CartResponseDTO refreshCart(UserDetails userDetails, CartRequestDTO cartRequestDTO) {
+        User currentUser = userService.getUserByPhone(userDetails.getUsername());
+        Cart cart = currentUser.getCart();
+        if (cart != null) {
+            currentUser.setCart(null);
+            userRepository.save(currentUser);
+        }
+        Cart newCart = cartRepository.save(new Cart());
+
+        cartRequestDTO.getCart().forEach(
+                i -> {
+                    CartItem cartItem = new CartItem();
+                    cartItem.setCount(i.getCount());
+                    cartItem.setProduct(productRepository.findById(i.getProductId()).orElseThrow(
+                            () -> new IllegalArgumentException("Product not found")
+                    ));
+                    cartItem.setCart(newCart);
+                    cartItemRepository.save(cartItem);
+                }
+        );
+
+        currentUser.setCart(newCart);
+        userRepository.save(currentUser);
+        Set<CartItem> cartItems = cartItemRepository.findAllByCart(newCart);
+        return getCartResponseDTO(newCart, cartItems);
     }
 }
