@@ -1,4 +1,4 @@
-package ru.alex9043.sushiapp.model.order;
+package ru.alex9043.sushiapp.model.order.cart;
 
 import jakarta.persistence.*;
 import lombok.*;

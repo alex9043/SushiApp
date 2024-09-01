@@ -1,11 +1,11 @@
-package ru.alex9043.sushiapp.DTO.order.cart;
+package ru.alex9043.sushiapp.DTO.order.order;
 
 import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Data
-public class ProductInCartItemResponseDTO {
+public class ProductInOrderItemResponseDTO {
     private Long id;
     private String name;
     private BigDecimal price;

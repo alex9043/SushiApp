@@ -189,14 +189,3 @@ insert into district (name)
 values ('Красногвардейский район');
 insert into district (name)
 values ('Красносельский район');
-
--- insert into cart (id)
--- values (1);
---
--- insert into cart_item (count, cart_id, product_id)
--- values (1, 1, 1);
---
--- insert into cart_item (count, cart_id, product_id)
--- values (2, 1, 2);
---
--- update users set cart_id = 1 where id = 1;

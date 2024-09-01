@@ -1,8 +1,8 @@
 package ru.alex9043.sushiapp.repository.order;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.alex9043.sushiapp.model.order.Cart;
-import ru.alex9043.sushiapp.model.order.CartItem;
+import ru.alex9043.sushiapp.model.order.cart.Cart;
+import ru.alex9043.sushiapp.model.order.cart.CartItem;
 
 import java.util.Set;
 

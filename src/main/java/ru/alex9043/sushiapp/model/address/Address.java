@@ -6,9 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
+import ru.alex9043.sushiapp.model.order.order.Order;
 import ru.alex9043.sushiapp.model.user.User;
 
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -50,6 +53,10 @@ public class Address {
     @ManyToOne
     @JoinColumn(name = "district_id", nullable = false)
     private District district;
+
+    @OneToMany(mappedBy = "address", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private Set<Order> orders = new LinkedHashSet<>();
 
     @Override
     public final boolean equals(Object o) {

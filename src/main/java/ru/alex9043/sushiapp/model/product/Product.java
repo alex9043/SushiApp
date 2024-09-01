@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
-import ru.alex9043.sushiapp.model.order.CartItem;
+import ru.alex9043.sushiapp.model.order.cart.CartItem;
+import ru.alex9043.sushiapp.model.order.order.OrderItem;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
@@ -61,6 +62,10 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private Set<CartItem> cartItems = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private Set<OrderItem> orderItems = new LinkedHashSet<>();
 
     @Override
     public final boolean equals(Object o) {
