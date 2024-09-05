@@ -189,8 +189,3 @@ insert into district (name)
 values ('Красногвардейский район');
 insert into district (name)
 values ('Красносельский район');
-
-
-
-
-

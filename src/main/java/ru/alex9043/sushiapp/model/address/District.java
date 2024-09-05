@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
+import ru.alex9043.sushiapp.model.order.order.Order;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -27,6 +28,10 @@ public class District {
     @ToString.Exclude
     @OneToMany(mappedBy = "district", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Address> addresses = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "district", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private Set<Order> orders = new LinkedHashSet<>();
 
     @Override
     public final boolean equals(Object o) {

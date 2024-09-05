@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class JwtService {
     private static final SecretKey ACCESS_TOKEN_SECRET = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private static final SecretKey REFRESH_TOKEN_SECRET = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private static final long ACCESS_TOKEN_VALIDITY_SECONDS = 1000 * 60 * 5; // 5 minutes
+    private static final long ACCESS_TOKEN_VALIDITY_SECONDS = 1000 * 60 * 15; // 15 minutes
     private static final long REFRESH_TOKEN_VALIDITY_SECONDS = 1000 * 60 * 60 * 24 * 14; // 14 days
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;

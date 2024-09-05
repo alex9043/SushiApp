@@ -81,4 +81,22 @@ public class GlobalExceptionHandler {
                 )
                 .build();
     }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public ErrorMessagesDTO handleOtherExceptions(Exception ex) {
+        getLog(ex.getStackTrace(), ex.getMessage());
+        return ErrorMessagesDTO.builder()
+                .errorMessages(
+                        List.of(
+                                ErrorMessageDTO.builder()
+                                        .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+                                        .message("Internal server error")
+                                        .timestamp(new Date())
+                                        .build()
+                        )
+                )
+                .build();
+    }
 }
