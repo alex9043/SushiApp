@@ -27,7 +27,6 @@ public class Order {
     @Column(name = "id", nullable = false)
     private Long id;
 
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -95,5 +94,8 @@ public class Order {
     @Column(name = "created_date", nullable = false)
     @CreatedDate
     private LocalDateTime createdDate;
+
+    @Column(name = "is_user", nullable = false)
+    private Boolean isUser = false;
 
 }

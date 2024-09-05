@@ -64,6 +64,7 @@ public class AuthenticationService {
         Address address = modelMapper.map(request, Address.class);
         address.setDistrict(district);
         address.setId(null);
+        address.setName(request.getAddressName());
 
         log.debug("Address in request - {}", address);
 

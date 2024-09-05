@@ -1,19 +1,20 @@
 package ru.alex9043.sushiapp.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import ru.alex9043.sushiapp.DTO.order.order.GuestOrderRequestDTO;
-import ru.alex9043.sushiapp.DTO.order.order.OrderItemResponseDTO;
-import ru.alex9043.sushiapp.DTO.order.order.OrderResponseDTO;
-import ru.alex9043.sushiapp.DTO.order.order.ProductInOrderItemResponseDTO;
+import ru.alex9043.sushiapp.DTO.order.order.*;
 import ru.alex9043.sushiapp.model.order.order.Order;
 import ru.alex9043.sushiapp.model.order.order.OrderItem;
 import ru.alex9043.sushiapp.model.order.order.OrderStatus;
 import ru.alex9043.sushiapp.model.product.Product;
+import ru.alex9043.sushiapp.model.user.User;
 import ru.alex9043.sushiapp.repository.order.order.OrderRepository;
 import ru.alex9043.sushiapp.repository.product.ProductRepository;
+import ru.alex9043.sushiapp.repository.user.AddressRepository;
 import ru.alex9043.sushiapp.repository.user.DistrictRepository;
 
 import java.util.Set;
@@ -23,10 +24,23 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class OrderService {
+    private final AddressRepository addressRepository;
     private final DistrictRepository districtRepository;
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final ModelMapper modelMapper;
+    private final UserService userService;
+
+    private Order reformOrderForResponse(Order order) {
+        order.setUserName(order.getUser().getName());
+        order.setStreet(order.getAddress().getStreet());
+        order.setHouseNumber(order.getAddress().getHouseNumber());
+        order.setBuilding(order.getAddress().getBuilding());
+        order.setEntrance(order.getAddress().getEntrance());
+        order.setFloor(order.getAddress().getFloor());
+        order.setApartmentNumber(order.getAddress().getApartmentNumber());
+        return order;
+    }
 
     private OrderResponseDTO createResponse(Order order) {
         return OrderResponseDTO.builder()
@@ -58,6 +72,7 @@ public class OrderService {
         Order order = modelMapper.map(guestOrderRequestDTO, Order.class);
         order.setId(null);
         order.setUser(null);
+        order.setIsUser(false);
         order.setDistrict(districtRepository.findById(guestOrderRequestDTO.getDistrictId()).orElseThrow(
                 () -> new IllegalArgumentException("District not found")
         ));
@@ -78,9 +93,38 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        log.debug("order - {}", savedOrder);
-        savedOrder.getOrderItems().forEach(i -> log.debug("order item - {}", i.toString()));
-
         return createResponse(savedOrder);
+    }
+
+    @Transactional
+    public OrderResponseDTO createUserOrder(UserDetails userDetails, UserOrderRequestDTO userOrderRequestDTO) {
+        log.info("Create order fo user");
+        User currentUser = userService.getUserByPhone(userDetails.getUsername());
+        Order order = modelMapper.map(userOrderRequestDTO, Order.class);
+        order.setId(null);
+        order.setOrderStatus(OrderStatus.CREATED);
+        order.setUser(currentUser);
+        order.setIsUser(true);
+        order.setAddress(addressRepository.findById(userOrderRequestDTO.getAddressId()).orElseThrow(
+                () -> new IllegalArgumentException("Address not found")
+        ));
+        Set<OrderItem> orderItems = userOrderRequestDTO.getOrderItems().stream().map(
+                i -> {
+                    Product product = productRepository.findById(i.getId()).orElseThrow(
+                            () -> new IllegalArgumentException("Product not found")
+                    );
+                    return OrderItem.builder()
+                            .product(product)
+                            .count(i.getCount())
+                            .order(order)
+                            .build();
+                }
+        ).collect(Collectors.toSet());
+        order.setOrderItems(orderItems);
+        Order savedOrder = orderRepository.save(order);
+
+        Order responseOrder = reformOrderForResponse(savedOrder);
+
+        return createResponse(responseOrder);
     }
 }
