@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.alex9043.sushiapp.DTO.order.order.*;
+import ru.alex9043.sushiapp.controller.OrdersResponseDTO;
 import ru.alex9043.sushiapp.model.order.order.Order;
 import ru.alex9043.sushiapp.model.order.order.OrderItem;
 import ru.alex9043.sushiapp.model.order.order.OrderStatus;
@@ -44,7 +45,10 @@ public class OrderService {
 
     private OrderResponseDTO createResponse(Order order) {
         return OrderResponseDTO.builder()
+                .id(order.getId())
                 .userName(order.getUserName())
+                .createdDate(order.getCreatedDate())
+                .orderStatus(order.getOrderStatus())
                 .street(order.getStreet())
                 .houseNumber(order.getHouseNumber())
                 .building(order.getBuilding())
@@ -126,5 +130,15 @@ public class OrderService {
         Order responseOrder = reformOrderForResponse(savedOrder);
 
         return createResponse(responseOrder);
+    }
+
+    public OrdersResponseDTO getOrders(UserDetails userDetails) {
+        User currentUser = userService.getUserByPhone(userDetails.getUsername());
+        Set<Order> orders = orderRepository.findByUser(currentUser);
+        OrdersResponseDTO response = new OrdersResponseDTO();
+        response.setOrders(orders.stream().map(
+                this::createResponse
+        ).collect(Collectors.toSet()));
+        return response;
     }
 }

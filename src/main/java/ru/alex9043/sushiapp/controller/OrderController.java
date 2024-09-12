@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.alex9043.sushiapp.DTO.error.ErrorMessageDTO;
 import ru.alex9043.sushiapp.DTO.order.order.GuestOrderRequestDTO;
 import ru.alex9043.sushiapp.DTO.order.order.OrderResponseDTO;
@@ -65,5 +62,18 @@ public class OrderController {
     public OrderResponseDTO createUserOrder(@AuthenticationPrincipal UserDetails userDetails,
                                             @RequestBody UserOrderRequestDTO userOrderRequestDTO) {
         return orderService.createUserOrder(userDetails, userOrderRequestDTO);
+    }
+
+    @Operation(summary = "Get orders",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Orders get successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = OrdersResponseDTO.class))),
+    })
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping
+    public OrdersResponseDTO getOrders(@AuthenticationPrincipal UserDetails userDetails) {
+        return orderService.getOrders(userDetails);
     }
 }

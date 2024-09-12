@@ -25,7 +25,6 @@ import ru.alex9043.sushiapp.repository.user.UserRepository;
 
 import java.util.Date;
 import java.util.Objects;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +51,7 @@ public class AuthenticationService {
 
         User user = modelMapper.map(request, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.getRoles().addAll(Set.of(Role.ROLE_USER, Role.ROLE_ADMIN));
+        user.getRoles().add(Role.ROLE_USER);
         user.setId(null);
         log.debug("User in request - {}", user);
 
