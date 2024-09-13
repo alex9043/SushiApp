@@ -1,20 +1,25 @@
 package ru.alex9043.sushiapp.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import ru.alex9043.sushiapp.DTO.user.address.AddressResponseDTO;
-import ru.alex9043.sushiapp.DTO.user.address.AddressesResponseDTO;
-import ru.alex9043.sushiapp.DTO.user.address.DistrictResponseDTO;
+import ru.alex9043.sushiapp.DTO.user.address.*;
+import ru.alex9043.sushiapp.model.address.Address;
 import ru.alex9043.sushiapp.model.user.User;
+import ru.alex9043.sushiapp.repository.user.AddressRepository;
+import ru.alex9043.sushiapp.repository.user.DistrictRepository;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AddressService {
+    private final DistrictRepository districtRepository;
+    private final AddressRepository addressRepository;
 
     private final UserService userService;
     private final ModelMapper modelMapper;
@@ -32,5 +37,44 @@ public class AddressService {
         return AddressesResponseDTO.builder()
                 .addresses(addressesDTO)
                 .build();
+    }
+
+    public AddressesResponseDTO addAddress(UserDetails userDetails, AddressRequestDTO addressRequestDTO) {
+        User currentUser = userService.getUserByPhone(userDetails.getUsername());
+        Address address = modelMapper.map(addressRequestDTO, Address.class);
+        address.setId(null);
+        address.setUser(currentUser);
+        addressRepository.save(address);
+
+        return getAddressesForUser(currentUser);
+    }
+
+    public AddressesResponseDTO changeAddress(UserDetails userDetails, AddressRequestDTO addressRequestDTO) {
+        User currentUser = userService.getUserByPhone(userDetails.getUsername());
+        Address address = addressRepository.findById(addressRequestDTO.getId()).orElseThrow(
+                () -> new RuntimeException("Address not found")
+        );
+        address.setName(addressRequestDTO.getName());
+        address.setStreet(addressRequestDTO.getStreet());
+        address.setHouseNumber(addressRequestDTO.getHouseNumber());
+        address.setBuilding(addressRequestDTO.getBuilding());
+        address.setEntrance(addressRequestDTO.getEntrance());
+        address.setFloor(addressRequestDTO.getFloor());
+        address.setApartmentNumber(addressRequestDTO.getApartmentNumber());
+        address.setDistrict(districtRepository.findById(addressRequestDTO.getDistrictId()).orElseThrow(
+                () -> new RuntimeException("District not found")
+        ));
+        addressRepository.save(address);
+
+        return getAddressesForUser(currentUser);
+    }
+
+    public AddressesResponseDTO removeAddress(UserDetails userDetails, AddressIdRequestDTO addressIdRequestDTO) {
+        User currentUser = userService.getUserByPhone(userDetails.getUsername());
+        Address address = addressRepository.findById(addressIdRequestDTO.getId()).orElseThrow(
+                () -> new RuntimeException("Address not found")
+        );
+        addressRepository.delete(address);
+        return getAddressesForUser(currentUser);
     }
 }
