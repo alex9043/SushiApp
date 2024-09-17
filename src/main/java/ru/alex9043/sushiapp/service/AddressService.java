@@ -5,7 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import ru.alex9043.sushiapp.DTO.user.address.*;
+import ru.alex9043.sushiapp.DTO.user.address.AddressRequestDTO;
+import ru.alex9043.sushiapp.DTO.user.address.AddressResponseDTO;
+import ru.alex9043.sushiapp.DTO.user.address.AddressesResponseDTO;
+import ru.alex9043.sushiapp.DTO.user.address.DistrictResponseDTO;
 import ru.alex9043.sushiapp.model.address.Address;
 import ru.alex9043.sushiapp.model.user.User;
 import ru.alex9043.sushiapp.repository.user.AddressRepository;
@@ -49,9 +52,9 @@ public class AddressService {
         return getAddressesForUser(currentUser);
     }
 
-    public AddressesResponseDTO changeAddress(UserDetails userDetails, AddressRequestDTO addressRequestDTO) {
+    public AddressesResponseDTO changeAddress(UserDetails userDetails, String addressId, AddressRequestDTO addressRequestDTO) {
         User currentUser = userService.getUserByPhone(userDetails.getUsername());
-        Address address = addressRepository.findById(addressRequestDTO.getId()).orElseThrow(
+        Address address = addressRepository.findById(Long.valueOf(addressId)).orElseThrow(
                 () -> new RuntimeException("Address not found")
         );
         address.setName(addressRequestDTO.getName());
@@ -69,9 +72,10 @@ public class AddressService {
         return getAddressesForUser(currentUser);
     }
 
-    public AddressesResponseDTO removeAddress(UserDetails userDetails, AddressIdRequestDTO addressIdRequestDTO) {
+    public AddressesResponseDTO removeAddress(UserDetails userDetails, String addressId) {
+        log.debug("Address id - {}", addressId);
         User currentUser = userService.getUserByPhone(userDetails.getUsername());
-        Address address = addressRepository.findById(addressIdRequestDTO.getId()).orElseThrow(
+        Address address = addressRepository.findById(Long.valueOf(addressId)).orElseThrow(
                 () -> new RuntimeException("Address not found")
         );
         addressRepository.delete(address);
