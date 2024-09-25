@@ -259,4 +259,6 @@ public class ProductController {
     public CategoriesResponseDTO getCategories() {
         return productService.getCategories();
     }
+
+
 }
