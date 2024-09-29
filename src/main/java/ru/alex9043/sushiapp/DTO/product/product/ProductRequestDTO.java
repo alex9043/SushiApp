@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Schema(description = "DTO for creating a product")
 @Data
@@ -17,4 +18,7 @@ public class ProductRequestDTO {
     @Positive(message = "Price must be positive")
     private BigDecimal price;
     private String base64Image;
+    private Set<Long> ingredients;
+    private Set<Long> tags;
+    private Set<Long> categories;
 }

@@ -333,3 +333,4 @@ values ('Красносельский район');
 insert into users (name, phone, email, password, roles)
 values ('ADMIN', '+88888888888', 'admin@test.test', '$2a$10$apqBTejdMEqqe/lSAVfSsOT7ViGsuZTlEdAYnu1.Tw7AoPvZ1UrQi',
         array ['ROLE_USER', 'ROLE_ADMIN']);
+

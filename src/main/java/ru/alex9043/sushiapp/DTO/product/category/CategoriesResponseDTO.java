@@ -4,11 +4,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
+import java.util.Set;
 
 @Schema(description = "DTO for categories response")
 @Data
 @Builder
 public class CategoriesResponseDTO {
-    private List<CategoryResponseDTO> categories;
+    private Set<CategoryResponseDTO> categories;
 }
