@@ -7,12 +7,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.alex9043.sushiapp.DTO.AccountRequestDTO;
-import ru.alex9043.sushiapp.DTO.user.PasswordRequestDTO;
-import ru.alex9043.sushiapp.DTO.user.UserResponseDTO;
+import ru.alex9043.sushiapp.DTO.user.*;
 import ru.alex9043.sushiapp.model.user.User;
 import ru.alex9043.sushiapp.repository.user.UserRepository;
 
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,5 +54,42 @@ public class AccountService {
         } else {
             throw new IllegalArgumentException("Passwords do not match");
         }
+    }
+
+    public UsersResponseDTO getUsers() {
+        Set<AdminUserResponseDTO> users = userRepository.findAll().stream().map(
+                u -> modelMapper.map(u, AdminUserResponseDTO.class)
+        ).collect(Collectors.toSet());
+        return UsersResponseDTO.builder()
+                .users(users)
+                .build();
+    }
+
+    public AdminUserResponseDTO getUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalArgumentException("User not found")
+        );
+        return modelMapper.map(user, AdminUserResponseDTO.class);
+    }
+
+    public UsersResponseDTO changeUser(Long userId, UserRequestDTO user) {
+        User userInDb = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalArgumentException("User not found")
+        );
+        userInDb.setName(user.getName());
+        userInDb.setEmail(user.getEmail());
+        userInDb.setPhone(user.getPhone());
+        userInDb.setPassword(passwordEncoder.encode(user.getPassword()));
+        userInDb.setDateOfBirth(user.getDateOfBirth());
+        userInDb.setRoles(user.getRoles());
+
+        userRepository.save(userInDb);
+
+        return getUsers();
+    }
+
+    public UsersResponseDTO deleteUser(Long userId) {
+        userRepository.deleteById(userId);
+        return getUsers();
     }
 }

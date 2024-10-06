@@ -12,8 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import ru.alex9043.sushiapp.DTO.AccountRequestDTO;
-import ru.alex9043.sushiapp.DTO.user.PasswordRequestDTO;
-import ru.alex9043.sushiapp.DTO.user.UserResponseDTO;
+import ru.alex9043.sushiapp.DTO.user.*;
 import ru.alex9043.sushiapp.service.AccountService;
 
 @RestController
@@ -23,6 +22,59 @@ import ru.alex9043.sushiapp.service.AccountService;
 public class AccountController {
     private final AccountService accountService;
 
+    @Operation(summary = "Get all profiles", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get profiles",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UsersResponseDTO.class))),
+    })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping
+    public UsersResponseDTO getUsers() {
+        return accountService.getUsers();
+    }
+
+    @Operation(summary = "Get user profile", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get user profile",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AdminUserResponseDTO.class))),
+    })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/{userId}")
+    public AdminUserResponseDTO getUser(@PathVariable(name = "userId") Long userId) {
+        return accountService.getUser(userId);
+    }
+
+    @Operation(summary = "Change user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User changed successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UsersResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input")
+    })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Profile change request",
+            required = true, content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = UserRequestDTO.class)))
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/{userId}")
+    public UsersResponseDTO changeUser(@PathVariable(name = "userId") Long userId, @RequestBody UserRequestDTO user) {
+        return accountService.changeUser(userId, user);
+    }
+
+    @Operation(summary = "Delete user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User deleted successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UsersResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input")
+    })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/{userId}")
+    public UsersResponseDTO deleteUser(@PathVariable(name = "userId") Long userId) {
+        return accountService.deleteUser(userId);
+    }
+
     @Operation(summary = "Get profile", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Get profile",
@@ -30,7 +82,7 @@ public class AccountController {
                             schema = @Schema(implementation = UserResponseDTO.class))),
     })
     @PreAuthorize("hasRole('ROLE_USER')")
-    @GetMapping
+    @GetMapping("/profile")
     public UserResponseDTO getUserProfile(@AuthenticationPrincipal UserDetails userDetails) {
         return accountService.getUserProfile(userDetails);
     }
